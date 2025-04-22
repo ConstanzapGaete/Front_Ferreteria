@@ -7,8 +7,14 @@ export class CartService {
   private items: any[] = [];
 
   addToCart(product: any) {
-    this.items.push(product);
+    const existing = this.items.find(item => item.id === product.id);
+    if (existing) {
+      existing.cantidad += 1;
+    } else {
+      this.items.push({ ...product, cantidad: 1 });
+    }
   }
+
   // luego con backend this.http.post('/api/carrito', product).subscribe();
 
 

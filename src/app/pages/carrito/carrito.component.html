@@ -1,7 +1,33 @@
-<h2>Tu Carrito</h2>
-<div *ngIf="items.length === 0">Tu carrito está vacío.</div>
+<section class="carrito-container">
+    <h2>Tu Carrito</h2>
+  
+    <div *ngIf="items.length > 0; else vacio">
+      <div class="carrito-grid">
+  
+        <div class="carrito-lista">
+          <div class="carrito-item" *ngFor="let item of items">
+            <img [src]="item.imagen" alt="{{ item.nombre }}" />
+            <div class="carrito-info">
+              <h3>{{ item.nombre }}</h3>
+              <p class="marca">{{ item.marca }}</p>
+              <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
+              <p class="precio">{{ (item.precio * item.cantidad) | currency:'CLP' }}</p>
+            </div>
+          </div>
+        </div>
+  
 
-<div *ngFor="let item of items" class="carrito-item">
-  <p>{{ item.nombre }}</p>
-  <p>{{ item.precio | currency: 'CLP':'symbol':'1.0-0' }}</p>
-</div>
+        <div class="resumen-compra">
+          <h3>Resumen de la compra</h3>
+          <p><strong>Productos:</strong> {{ calcularCantidadTotal() }}</p>
+          <p><strong>Total:</strong> {{ calcularTotal() | currency:'CLP' }}</p>
+          <button class="btn-comprar">Continuar compra</button>
+        </div>
+      </div>
+    </div>
+  
+    <ng-template #vacio>
+      <p>Tu carrito está vacío 🛒</p>
+    </ng-template>
+  </section>
+  
