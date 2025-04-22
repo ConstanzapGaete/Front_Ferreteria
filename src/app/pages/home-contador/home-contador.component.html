@@ -1,0 +1,27 @@
+<div class="dashboard-layout">
+    
+    <div class="dashboard-sidebar">
+      <button (click)="seccionActiva = 'pagos'"> Confirmar Pagos</button>
+      <button (click)="seccionActiva = 'entregas'"> Entregas Registradas</button>
+      <button (click)="seccionActiva = 'reportes'"> Reportes Financieros</button>
+    </div>
+  
+   
+    <div class="dashboard-content">
+      <ng-container [ngSwitch]="seccionActiva">
+        <div *ngSwitchCase="'pagos'">
+          <h3>💸 Confirmar Pagos</h3>
+          <p>Valida las transferencias realizadas por los clientes.</p>
+        </div>
+        <div *ngSwitchCase="'entregas'">
+          <h3>📦 Entregas Registradas</h3>
+          <p>Verifica que los productos hayan sido entregados correctamente.</p>
+        </div>
+        <div *ngSwitchCase="'reportes'">
+          <h3>📊 Reportes Financieros</h3>
+          <p>Elabora balances y revisa estadísticas de ingresos y egresos.</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  

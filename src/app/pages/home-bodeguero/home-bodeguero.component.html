@@ -1,0 +1,27 @@
+<div class="dashboard-layout">
+
+    <div class="dashboard-sidebar">
+      <button (click)="seccionActiva = 'ordenes'"> Ordenes</button>
+      <button (click)="seccionActiva = 'preparacion'"> Preparar Pedido</button>
+      <button (click)="seccionActiva = 'entrega'"> Entregar Pedido</button>
+    </div>
+  
+  
+    <div class="dashboard-content">
+      <ng-container [ngSwitch]="seccionActiva">
+        <div *ngSwitchCase="'ordenes'">
+          <h3>📦 Órdenes Recibidas</h3>
+          <p>Consulta las órdenes pendientes.</p>
+        </div>
+        <div *ngSwitchCase="'preparacion'">
+          <h3>🧰 Preparación de Pedidos</h3>
+          <p>Selecciona y organiza los productos para el pedido.</p>
+        </div>
+        <div *ngSwitchCase="'entrega'">
+          <h3>🚚 Entrega al Vendedor</h3>
+          <p>Confirma la entrega del pedido al vendedor correspondiente.</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  

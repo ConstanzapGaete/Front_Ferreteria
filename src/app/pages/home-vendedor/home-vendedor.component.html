@@ -1,0 +1,28 @@
+<div class="dashboard-layout">
+    
+    <div class="dashboard-sidebar">
+      <button (click)="seccionActiva = 'productos'"> Productos</button>
+      <button (click)="seccionActiva = 'pedidos'"> Pedidos</button>
+      <button (click)="seccionActiva = 'despacho'"> Despachos</button>
+    </div>
+  
+  
+    <div class="dashboard-content">
+      <ng-container [ngSwitch]="seccionActiva">
+        <div *ngSwitchCase="'productos'">
+          <h3>📦 Productos en Bodega</h3>
+          <p>Aquí van los productos disponibles actualmente.</p>
+        </div>
+        <div *ngSwitchCase="'pedidos'">
+          <h3>✅ Pedidos Pendientes</h3>
+          <p>Aprueba o rechaza solicitudes de compra.</p>
+        </div>
+        <div *ngSwitchCase="'despacho'">
+          <h3>🚚 Organizar Despacho</h3>
+          <p>Envía órdenes al bodeguero y coordina la entrega.</p>
+        </div>
+        
+      </ng-container>
+    </div>
+  </div>
+  

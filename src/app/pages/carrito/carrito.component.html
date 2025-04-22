@@ -1,0 +1,7 @@
+<h2>Tu Carrito</h2>
+<div *ngIf="items.length === 0">Tu carrito está vacío.</div>
+
+<div *ngFor="let item of items" class="carrito-item">
+  <p>{{ item.nombre }}</p>
+  <p>{{ item.precio | currency: 'CLP':'symbol':'1.0-0' }}</p>
+</div>
