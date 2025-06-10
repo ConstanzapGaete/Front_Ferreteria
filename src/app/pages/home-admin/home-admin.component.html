@@ -1,17 +1,15 @@
 <div class="dashboard-layout">
-    
     <div class="dashboard-sidebar">
       <button (click)="seccionActiva = 'ventas'"> Ventas</button>
       <button (click)="seccionActiva = 'desempeno'"> Desempeño</button>
       <button (click)="seccionActiva = 'promos'"> Promociones</button>
+      <button (click)="seccionActiva = 'usuarios'"> Gestión de Usuarios</button>
     </div>
   
-    
     <div class="dashboard-content">
       <ng-container [ngSwitch]="seccionActiva">
         <div *ngSwitchCase="'ventas'">
-          <h3>📊 Informe de Ventas</h3>
-          <p>Visualiza las ventas mensuales por sucursal.</p>
+          <app-tabla-ventas></app-tabla-ventas>
         </div>
         <div *ngSwitchCase="'desempeno'">
           <h3>📈 Desempeño de Tienda</h3>
@@ -21,7 +19,9 @@
           <h3>💡 Promociones</h3>
           <p>Crea campañas para aumentar las ventas.</p>
         </div>
-
+        <div *ngSwitchCase="'usuarios'">
+          <app-tabla-usuarios></app-tabla-usuarios>
+        </div>
       </ng-container>
     </div>
   </div>

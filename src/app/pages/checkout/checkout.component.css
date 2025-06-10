@@ -1,0 +1,66 @@
+.checkout-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.checkout-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.form-entrega {
+  flex: 2;
+}
+
+.form-entrega label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.form-entrega input[type="text"],
+.form-entrega input[type="tel"],
+.form-entrega select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.resumen-pago {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+  min-width: 250px;
+}
+
+.resumen-pago p {
+  margin: 0.75rem 0;
+  font-size: 1rem;
+}
+
+.btn-pagar {
+  margin-top: 1rem;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-pagar:hover {
+  background-color: #0056b3;
+}

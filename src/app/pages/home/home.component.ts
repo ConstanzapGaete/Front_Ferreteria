@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +10,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  constructor(private router: Router) {}
+
   categories = [
     {
       name: 'Herramientas Eléctricas',
@@ -35,5 +38,9 @@ export class HomeComponent {
       img: 'assets/images/cat-manuales.png'
     }
   ];
+
+  irACatalogo() {
+    this.router.navigate(['/catalogo']);
+  }
 }
 

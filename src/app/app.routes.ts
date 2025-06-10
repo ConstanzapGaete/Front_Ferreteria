@@ -7,6 +7,7 @@ import { HomeVendedorComponent } from './pages/home-vendedor/home-vendedor.compo
 import { HomeBodegueroComponent } from './pages/home-bodeguero/home-bodeguero.component';
 import { HomeContadorComponent } from './pages/home-contador/home-contador.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
+import { CheckoutComponent } from './pages/checkout/checkout.component';
 
 
 export const routes: Routes = [
@@ -18,5 +19,6 @@ export const routes: Routes = [
   { path: 'bodeguero', component: HomeBodegueroComponent },
   { path: 'contador', component: HomeContadorComponent },
   { path: 'carrito', component: CarritoComponent },
+  { path: 'checkout', component: CheckoutComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

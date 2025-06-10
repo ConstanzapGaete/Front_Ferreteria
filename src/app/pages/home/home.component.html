@@ -3,7 +3,7 @@
     <p class="subtitle">Lo más buscado para tu obra y proyectos en casa</p>
   
     <div class="category-grid">
-      <div class="category" *ngFor="let cat of categories">
+      <div class="category" *ngFor="let cat of categories" (click)="irACatalogo()" role="button" tabindex="0">
         <img [src]="cat.img" [alt]="cat.name" />
         <span>{{ cat.name }}</span>
       </div>

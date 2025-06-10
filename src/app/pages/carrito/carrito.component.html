@@ -1,33 +1,35 @@
 <section class="carrito-container">
-    <h2>Tu Carrito</h2>
-  
-    <div *ngIf="items.length > 0; else vacio">
-      <div class="carrito-grid">
-  
-        <div class="carrito-lista">
-          <div class="carrito-item" *ngFor="let item of items">
-            <img [src]="item.imagen" alt="{{ item.nombre }}" />
-            <div class="carrito-info">
-              <h3>{{ item.nombre }}</h3>
-              <p class="marca">{{ item.marca }}</p>
-              <p class="cantidad">Cantidad: {{ item.cantidad }}</p>
-              <p class="precio">{{ (item.precio * item.cantidad) | currency:'CLP' }}</p>
-            </div>
-          </div>
-        </div>
-  
+  <h2>Carro ({{ calcularCantidadTotal() }} productos)</h2>
 
-        <div class="resumen-compra">
-          <h3>Resumen de la compra</h3>
-          <p><strong>Productos:</strong> {{ calcularCantidadTotal() }}</p>
-          <p><strong>Total:</strong> {{ calcularTotal() | currency:'CLP' }}</p>
-          <button class="btn-comprar">Continuar compra</button>
+  <div *ngIf="items.length > 0; else vacio" class="carrito-grid">
+
+    <div class="carrito-lista">
+      <div class="carrito-item" *ngFor="let item of items; let i = index">
+        <img [src]="item.imagen" alt="{{ item.nombre }}" />
+        <div class="carrito-info">
+          <h3>{{ item.nombre }}</h3>
+          <p class="marca">{{ item.marca }}</p>
+          <p class="precio">{{ item.precio | currency:'CLP' }}</p>
         </div>
+        <div class="cantidad-controles">
+          <button (click)="restaItem(i)">−</button>
+          <span>{{ item.cantidad }}</span>
+          <button (click)="sumaItem(i)">+</button>
+          <div class="stock">Máx 999 unidades</div>
+        </div>
+        <button class="eliminar" (click)="eliminarItem(i)">🗑</button>
       </div>
     </div>
-  
-    <ng-template #vacio>
-      <p>Tu carrito está vacío 🛒</p>
-    </ng-template>
-  </section>
-  
+
+    <div class="resumen-compra">
+      <h3>Resumen de la compra</h3>
+      <p>Productos: <strong>{{ calcularCantidadTotal() }}</strong></p>
+      <p>Total: <strong>{{ calcularTotal() | currency:'CLP' }}</strong></p>
+      <button class="btn-comprar" (click)="irACheckout()">Continuar compra</button>
+    </div>
+  </div>
+
+  <ng-template #vacio>
+    <p>Tu carrito está vacío 🛒</p>
+  </ng-template>
+</section>

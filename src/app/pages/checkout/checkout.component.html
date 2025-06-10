@@ -1,0 +1,51 @@
+<section class="checkout-container">
+  <h2>Finalizar Compra</h2>
+
+  <div class="checkout-grid">
+
+  
+    <div class="form-entrega">
+      <h3>Tipo de entrega</h3>
+
+      <label>
+        <input type="radio" name="entrega" value="retiro" [(ngModel)]="tipoEntrega" />
+        Retiro en tienda
+      </label>
+
+      <label>
+        <input type="radio" name="entrega" value="delivery" [(ngModel)]="tipoEntrega" />
+        Delivery (+$3.000)
+      </label>
+
+
+      <div *ngIf="tipoEntrega === 'delivery'" class="formulario-despacho">
+        <h4>Datos de despacho</h4>
+
+        <label for="region">Región</label>
+        <select id="region" [(ngModel)]="datosDespacho.region" required>
+          <option value="" disabled selected>Selecciona una región</option>
+          <option *ngFor="let region of regiones" [value]="region">{{ region }}</option>
+        </select>
+
+        <label for="calle">Calle</label>
+        <input id="calle" type="text" [(ngModel)]="datosDespacho.calle" required />
+
+        <label for="numero">Número</label>
+        <input id="numero" type="text" [(ngModel)]="datosDespacho.numero" required />
+
+        <label for="dpto">Dpto. / Casa / Oficina / Condominio (opcional)</label>
+        <input id="dpto" type="text" [(ngModel)]="datosDespacho.dpto" placeholder="Ej: Dpto 203" />
+      </div>
+    </div>
+
+
+    <div class="resumen-pago">
+      <h3>Resumen</h3>
+      <p>Productos: <strong>{{ totalProductos | currency:'CLP' }}</strong></p>
+      <p *ngIf="tipoEntrega === 'delivery'">Despacho: <strong>{{ 3000 | currency:'CLP' }}</strong></p>
+      <p><strong>Total a pagar: {{ totalFinal | currency:'CLP' }}</strong></p>
+
+      <button class="btn-pagar" (click)="pagarCompra()">Pagar compra</button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<section class="tabla-usuarios">
+  <h2>Gestión de Usuarios</h2>
+
+  <!-- Formulario -->
+  <div class="formulario-usuario">
+    <input [(ngModel)]="nuevoUsuario.nombre" placeholder="Nombre completo" />
+    <input [(ngModel)]="nuevoUsuario.correo" placeholder="Correo electrónico" />
+    <select [(ngModel)]="nuevoUsuario.rol">
+      <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+    </select>
+
+    <button *ngIf="editandoId === null" (click)="agregarUsuario()">Agregar</button>
+    <button *ngIf="editandoId !== null" (click)="guardarEdicion()">Guardar</button>
+    <button *ngIf="editandoId !== null" (click)="cancelarEdicion()">Cancelar</button>
+  </div>
+
+  <!-- Tabla -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.correo }}</td>
+        <td>{{ u.rol }}</td>
+        <td>
+          <button (click)="editarUsuario(u)">✏️</button>
+          <button (click)="eliminarUsuario(u.id)">🗑</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>

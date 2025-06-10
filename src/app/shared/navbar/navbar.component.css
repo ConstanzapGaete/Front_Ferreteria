@@ -1,41 +1,55 @@
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--bg-color);
-    padding: 0.5rem 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    min-height: 60px;
-  }
-  
-  .navbar-logo img {
-    height: 40px;
-    object-fit: contain;
-  }
-  
-  .navbar-links {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-  }
-  
-  .navbar-links a {
-    color: #002b63;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
-  }
-  
-  .navbar-links a:hover {
-    color: var(--accent-color);
-  }
-  
-  .navbar-links a.active {
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 2px;
-  }
-  .navbar-links a[href*="carrito"] {
-    color: var(--primary-color);
-  }
-  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-color);
+  padding: 0.5rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  min-height: 60px;
+}
+
+.navbar-left img {
+  height: 40px;
+  object-fit: contain;
+}
+
+.navbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-center input {
+  width: 300px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navbar-right a {
+  color: #002b63;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.navbar-right a:hover {
+  color: var(--accent-color);
+}
+
+.navbar-right a.active {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 2px;
+}
+
+.navbar-right a[href*="carrito"] {
+  color: var(--primary-color);
+}

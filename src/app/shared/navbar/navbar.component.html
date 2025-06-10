@@ -1,13 +1,22 @@
 <nav class="navbar">
-    <div class="navbar-logo">
+  <div class="navbar-left">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       <img src="assets/images/logo_ferremas.png" alt="Logo FERREMAS" />
-    </div>
-  
-    <div class="navbar-links">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-      <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
-      <a routerLink="/carrito" routerLinkActive="active">🛒</a>
-      <a routerLink="/login" class="login-link" routerLinkActive="active">Iniciar Sesión</a>
-    </div>
-  </nav>
-  
+    </a>
+  </div>
+
+  <div class="navbar-center">
+    <input
+      type="text"
+      placeholder="Buscar productos..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange()" />
+  </div>
+
+  <div class="navbar-right">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+    <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+    <a routerLink="/carrito" routerLinkActive="active">🛒</a>
+    <a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a>
+  </div>
+</nav>

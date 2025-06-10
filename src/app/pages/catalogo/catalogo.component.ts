@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-catalogo',
@@ -43,11 +44,33 @@ export class CatalogoComponent {
     }
   ];
 
-  constructor(private cartService: CartService) {}
+   productosFiltrados = this.productos;
+  terminoBuscado: string = '';
+
+  constructor(private cartService: CartService, private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const q = (params['q'] || '').toLowerCase();
+      this.terminoBuscado = q;
+      this.filtrarProductos(q);
+    });
+  }
+
+  filtrarProductos(termino: string) {
+    if (!termino) {
+      this.productosFiltrados = this.productos;
+    } else {
+      this.productosFiltrados = this.productos.filter(prod =>
+        prod.nombre.toLowerCase().includes(termino) ||
+        prod.marca.toLowerCase().includes(termino)
+      );
+    }
+  }
+
   addToCart(product: any) {
     this.cartService.addToCart(product);
     alert(`${product.nombre} agregado al carrito 🛒`);
-    // aqui va lo del backend
   }
 }
 

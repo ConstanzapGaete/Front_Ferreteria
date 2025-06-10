@@ -1,18 +1,20 @@
 <section class="catalogo">
-    <h2>Catálogo de Productos</h2>
-  
-    <div class="productos-grid">
-      <div class="producto-card" *ngFor="let producto of productos">
-        <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
-        <div class="producto-info">
-          <h3>{{ producto.nombre }}</h3>
-          <p class="marca">{{ producto.marca }}</p>
-          <p class="precio">${{ producto.precio | number }}</p>
-          <button (click)="addToCart(producto)">Agregar al carrito</button>
-        
-          
-        </div>
+  <h2 *ngIf="terminoBuscado">Resultados para: "{{ terminoBuscado }}"</h2>
+  <h2 *ngIf="!terminoBuscado">Catálogo de Productos</h2>
+
+  <div *ngIf="productosFiltrados.length > 0; else sinResultados" class="productos-grid">
+    <div class="producto-card" *ngFor="let producto of productosFiltrados">
+      <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
+      <div class="producto-info">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="marca">{{ producto.marca }}</p>
+        <p class="precio">${{ producto.precio | number }}</p>
+        <button (click)="addToCart(producto)">Agregar al carrito</button> 
       </div>
     </div>
-  </section>
-  
+  </div>
+
+  <ng-template #sinResultados>
+    <p>No se encontraron productos con ese término.</p>
+  </ng-template>
+</section>
