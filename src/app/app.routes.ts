@@ -18,10 +18,10 @@ export const routes: Routes = [
   { path: 'carrito', component: CarritoComponent },
 
   { path: 'admin', component: HomeAdminComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
-  { path: 'vendedor', component: HomeVendedorComponent, canActivate: [authGuard], data: { roles: ['VENDEDOR'] } },
-  { path: 'bodeguero', component: HomeBodegueroComponent, canActivate: [authGuard], data: { roles: ['BODEGUERO'] } },
-  { path: 'contador', component: HomeContadorComponent, canActivate: [authGuard], data: { roles: ['DESPACHADOR'] } },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard], data: { roles: ['CLIENTE'] } },
+  { path: 'vendedor', component: HomeVendedorComponent, canActivate: [authGuard], data: { roles: ['VENDEDOR', 'ADMIN'] } },
+  { path: 'bodeguero', component: HomeBodegueroComponent, canActivate: [authGuard], data: { roles: ['BODEGUERO', 'ADMIN'] } },
+  { path: 'contador', component: HomeContadorComponent, canActivate: [authGuard], data: { roles: ['DESPACHADOR', 'ADMIN'] } },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard], data: { roles: ['CLIENTE', 'ADMIN'] } },
 
   { path: 'no-autorizado', component: NoAutorizadoComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
