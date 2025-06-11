@@ -1,0 +1,40 @@
+<table class="tabla-pagos">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Monto</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let pago of pagosPendientes">
+      <td>{{ pago.id }}</td>
+      <td>{{ pago.cliente }}</td>
+      <td>{{ pago.monto | currency:'CLP' }}</td>
+      <td>{{ pago.fecha }}</td>
+
+
+      <td>
+        <span *ngIf="pago.estado === 'confirmado'" class="confirmado">✔ Confirmado</span>
+        <span *ngIf="pago.estado === 'rechazado'" class="rechazado">✘ Rechazado</span>
+        <span *ngIf="pago.estado === 'pendiente'" class="pendiente">Pendiente</span>
+      </td>
+
+
+      <td>
+        <button
+          *ngIf="pago.estado === 'pendiente'"
+          (click)="confirmarPago(pago.id)"
+        >Confirmar</button>
+        <button
+          *ngIf="pago.estado === 'pendiente'"
+          (click)="rechazarPago(pago.id)"
+          class="rechazar"
+        >Rechazar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

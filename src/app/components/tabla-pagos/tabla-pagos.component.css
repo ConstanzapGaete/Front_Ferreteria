@@ -1,0 +1,49 @@
+.tabla-pagos {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-pagos th,
+.tabla-pagos td {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+button {
+  padding: 0.4rem 0.8rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.confirmado {
+  color: green;
+  font-weight: bold;
+}
+
+.pendiente {
+  color: rgb(17, 2, 156);
+  font-weight: bold;
+}
+
+
+.rechazado {
+  color: red;
+  font-weight: bold;
+}
+
+button.rechazar {
+  background-color: #dc3545;
+}
+
+button.rechazar:hover {
+  background-color: #a61c2f;
+}

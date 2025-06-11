@@ -11,7 +11,7 @@
       <ng-container [ngSwitch]="seccionActiva">
         <div *ngSwitchCase="'pagos'">
           <h3>💸 Confirmar Pagos</h3>
-          <p>Valida las transferencias realizadas por los clientes.</p>
+          <app-tabla-pagos></app-tabla-pagos>
         </div>
         <div *ngSwitchCase="'entregas'">
           <h3>📦 Entregas Registradas</h3>
