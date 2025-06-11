@@ -28,14 +28,6 @@ export class LoginComponent {
         if (token) {
           localStorage.setItem('token', token);
           this.router.navigate(['/catalogo']);
-          this.authService.getUsuarios().subscribe({
-            next: (usuarios) => {
-              console.log('Usuarios recibidos:', usuarios);
-            },
-            error: (err) => {
-              console.error('Error al obtener usuarios:', err);
-            }
-          });
         } else {
           console.warn('No se recibió token');
         }
