@@ -1,16 +1,23 @@
-<div class="categories">
+<main>
+  <div class="categories">
     <h2>Categorías Destacadas</h2>
     <p class="subtitle">Lo más buscado para tu obra y proyectos en casa</p>
-  
+
     <div class="category-grid">
-      <div class="category" *ngFor="let cat of categories" (click)="irACatalogo()" role="button" tabindex="0">
+      <div
+        class="category"
+        *ngFor="let cat of categories"
+        (click)="irACatalogo()"
+        role="button"
+        tabindex="0"
+      >
         <img [src]="cat.img" [alt]="cat.name" />
         <span>{{ cat.name }}</span>
       </div>
     </div>
   </div>
+</main>
 
-
-  
+<app-footer></app-footer>
 
   
