@@ -26,7 +26,7 @@ export class LoginComponent {
         console.log('Respuesta del backend:', res);
         const token = res.data.token;
         if (token) {
-          localStorage.setItem('token', token);
+          this.authService.notifyLogin(token);
           this.router.navigate(['/catalogo']);
         } else {
           console.warn('No se recibió token');

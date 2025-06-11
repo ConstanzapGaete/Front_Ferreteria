@@ -61,14 +61,20 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('token');
-      const jwtHelper = new JwtHelperService();
+      this.authService.isLoggedIn$.subscribe((status) => {
+        this.isLoggedIn = status;
 
-      if (token && !jwtHelper.isTokenExpired(token)) {
-        const decoded: any = jwtHelper.decodeToken(token);
-        this.isLoggedIn = true;
-        this.userEmail = decoded.sub; // Muestra el correo como identificador
-      }
+        if (status) {
+          const token = localStorage.getItem('token');
+          const jwtHelper = new JwtHelperService();
+          if (token && !jwtHelper.isTokenExpired(token)) {
+            const decoded: any = jwtHelper.decodeToken(token);
+            this.userEmail = decoded.sub;
+          }
+        } else {
+          this.userEmail = null;
+        }
+      });
     }
   }
 
