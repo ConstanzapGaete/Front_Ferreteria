@@ -20,14 +20,22 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
-    console.log('onSubmit ejecutado'); // ← Asegura que se ejecuta
+    console.log('onSubmit ejecutado');
     this.authService.login(this.email, this.password).subscribe({
       next: (res: any) => {
         console.log('Respuesta del backend:', res);
         const token = res.data.token;
         if (token) {
           localStorage.setItem('token', token);
-          this.router.navigate(['/catalogo']); // o donde quieras redirigir
+          this.router.navigate(['/catalogo']);
+          this.authService.getUsuarios().subscribe({
+            next: (usuarios) => {
+              console.log('Usuarios recibidos:', usuarios);
+            },
+            error: (err) => {
+              console.error('Error al obtener usuarios:', err);
+            }
+          });
         } else {
           console.warn('No se recibió token');
         }
