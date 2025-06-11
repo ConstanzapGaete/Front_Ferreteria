@@ -8,17 +8,21 @@ import { HomeBodegueroComponent } from './pages/home-bodeguero/home-bodeguero.co
 import { HomeContadorComponent } from './pages/home-contador/home-contador.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
-
+import { authGuard } from './guards/auth.guard';
+import { NoAutorizadoComponent } from './pages/no-autorizado/no-autorizado.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'catalogo', component: CatalogoComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'admin', component: HomeAdminComponent  },
-  { path: 'vendedor', component: HomeVendedorComponent },
-  { path: 'bodeguero', component: HomeBodegueroComponent },
-  { path: 'contador', component: HomeContadorComponent },
   { path: 'carrito', component: CarritoComponent },
-  { path: 'checkout', component: CheckoutComponent },
+
+  { path: 'admin', component: HomeAdminComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
+  { path: 'vendedor', component: HomeVendedorComponent, canActivate: [authGuard], data: { roles: ['VENDEDOR', 'ADMIN'] } },
+  { path: 'bodeguero', component: HomeBodegueroComponent, canActivate: [authGuard], data: { roles: ['BODEGUERO', 'ADMIN'] } },
+  { path: 'contador', component: HomeContadorComponent, canActivate: [authGuard], data: { roles: ['DESPACHADOR', 'ADMIN'] } },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard], data: { roles: ['CLIENTE', 'ADMIN'] } },
+
+  { path: 'no-autorizado', component: NoAutorizadoComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

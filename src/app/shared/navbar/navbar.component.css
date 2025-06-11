@@ -53,3 +53,48 @@
 .navbar-right a[href*="carrito"] {
   color: var(--primary-color);
 }
+
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.user-button {
+  background-color: #002b63;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-menu {
+  margin-top: 0.5rem;
+  background-color: white;
+  color: #002b63;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  position: absolute;
+  right: 0;
+  width: 160px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  color: #002b63;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f0f0f0;
+}
+

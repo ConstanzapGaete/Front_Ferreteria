@@ -1,14 +1,21 @@
 <nav class="navbar-trabajador">
-    <div class="navbar-logo-trabajador">
-      <img src="assets/images/logo_corp.png" alt="Logo FERREMAS" />
+  <div class="navbar-logo-trabajador">
+    <img src="assets/images/logo_corp.png" alt="Logo FERREMAS" />
+  </div>
+
+  <div class="navbar-title-trabajador">
+    {{ currentTitle }}
+  </div>
+
+  <div class="navbar-links-trabajador" *ngIf="userEmail">
+    <div class="user-menu-trabajador">
+      <button (click)="toggleMenu()" class="user-button-trabajador">
+        {{ userEmail }} ▼
+      </button>
+      <div *ngIf="menuOpen" class="dropdown-menu-trabajador">
+        <a (click)="goTo('perfil')">Tienda</a>
+        <a (click)="logout()">Cerrar sesión</a>
+      </div>
     </div>
-  
-    <div class="navbar-title-trabajador">
-      {{ currentTitle }}
-    </div>
-  
-    <div class="navbar-links-trabajador">
-      <a routerLink="/login" class="login-link" routerLinkActive="active">Cerrar sesión</a>
-    </div>
-  </nav>
-  
+  </div>
+</nav>
