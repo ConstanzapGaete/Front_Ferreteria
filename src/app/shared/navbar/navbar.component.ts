@@ -20,6 +20,7 @@ export class NavbarComponent {
 
   isLoggedIn: boolean = false;
   userEmail: string | null = null;
+  userRole: string | null = null;
   menuOpen: boolean = false;
 
   private authService: AuthService = inject(AuthService);
@@ -44,10 +45,13 @@ export class NavbarComponent {
         const jwtHelper = new JwtHelperService();
         if (token && !jwtHelper.isTokenExpired(token)) {
           const decoded: any = jwtHelper.decodeToken(token);
+          console.log(decoded);  // <-- para verificar contenido del token
           this.userEmail = decoded.sub;
+          this.userRole = decoded.rol || null;
         }
       } else {
         this.userEmail = null;
+        this.userRole = null;
       }
     });
   }
@@ -76,5 +80,22 @@ export class NavbarComponent {
   goTo(ruta: string): void {
     this.router.navigate(['/' + ruta]);
     this.menuOpen = false;
+  }
+
+  goToRole(): void {
+    if (!this.userRole) return;
+
+    const roleRouteMap: { [key: string]: string } = {
+      'ADMIN': 'admin',
+      'VENDEDOR': 'vendedor',
+      'BODEGUERO': 'bodeguero',
+      'DESPACHADOR': 'contador'
+    };
+
+    const ruta = roleRouteMap[this.userRole];
+    if (ruta) {
+      this.router.navigate(['/' + ruta]);
+      this.menuOpen = false;
+    }
   }
 }

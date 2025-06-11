@@ -25,6 +25,8 @@
           {{ userEmail }} ▼
         </button>
         <div *ngIf="menuOpen" class="dropdown-menu">
+          <a *ngIf="userRole && userRole !== 'CLIENTE'" (click)="goToRole()" class="dropdown-item">
+            Ir a vista {{ userRole.toLowerCase() }}</a>
           <a (click)="goTo('perfil')">Mi perfil</a>
           <a (click)="goTo('compras')">Mis compras</a>
           <a (click)="goTo('favoritos')">Favoritos</a>
