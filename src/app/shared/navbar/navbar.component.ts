@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule, CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
@@ -15,7 +18,15 @@ export class NavbarComponent {
   lastNonSearchRoute: string = '/';
   debounceTimeout: any;
 
-  constructor(private router: Router) {
+  isLoggedIn: boolean = false;
+  userEmail: string | null = null;
+  menuOpen: boolean = false;
+
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
+
+  constructor() {
+    // Manejo de búsqueda
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
@@ -23,11 +34,26 @@ export class NavbarComponent {
         this.lastNonSearchRoute = event.url;
       }
     });
+
+    // Manejo de sesión
+    this.authService.isLoggedIn$.subscribe((status: boolean) => {
+      this.isLoggedIn = status;
+
+      if (status) {
+        const token = localStorage.getItem('token');
+        const jwtHelper = new JwtHelperService();
+        if (token && !jwtHelper.isTokenExpired(token)) {
+          const decoded: any = jwtHelper.decodeToken(token);
+          this.userEmail = decoded.sub;
+        }
+      } else {
+        this.userEmail = null;
+      }
+    });
   }
 
   onSearchChange() {
     clearTimeout(this.debounceTimeout);
-
     this.debounceTimeout = setTimeout(() => {
       const termino = this.searchTerm.trim();
       if (termino) {
@@ -36,5 +62,19 @@ export class NavbarComponent {
         this.router.navigateByUrl(this.lastNonSearchRoute);
       }
     }, 300); 
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  goTo(ruta: string): void {
+    this.router.navigate(['/' + ruta]);
+    this.menuOpen = false;
   }
 }

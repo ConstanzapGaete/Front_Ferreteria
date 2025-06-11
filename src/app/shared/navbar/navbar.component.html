@@ -17,6 +17,24 @@
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
     <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
     <a routerLink="/carrito" routerLinkActive="active">🛒</a>
-    <a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a>
+
+    <!-- Botón dinámico según sesión -->
+    <ng-container *ngIf="isLoggedIn; else loginBtn">
+      <div class="user-menu">
+        <button (click)="toggleMenu()" class="user-button">
+          {{ userEmail }} ▼
+        </button>
+        <div *ngIf="menuOpen" class="dropdown-menu">
+          <a (click)="goTo('perfil')">Mi perfil</a>
+          <a (click)="goTo('compras')">Mis compras</a>
+          <a (click)="goTo('favoritos')">Favoritos</a>
+          <a (click)="logout()">Cerrar sesión</a>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #loginBtn>
+      <a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a>
+    </ng-template>
   </div>
 </nav>

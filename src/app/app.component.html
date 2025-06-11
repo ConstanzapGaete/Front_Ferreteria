@@ -1,22 +1,15 @@
+
 <app-navbar *ngIf="isPublicRoute()"></app-navbar>
 
+
 <app-navbar-trabajador *ngIf="isPrivateRoute()"></app-navbar-trabajador>
+
 
 <div *ngIf="isPublicRoute() && router.url !== '/login'" class="info-banner">
   <span [innerHTML]="currentMessage" [ngClass]="bannerClass"></span>
 </div>
 
-<!-- Slide button solo si el usuario está logueado -->
-<div *ngIf="isLoggedIn" class="user-menu">
-  <button (click)="toggleMenu()" class="user-button">
-    {{ userEmail }} ▼
-  </button>
-  <div *ngIf="menuOpen" class="dropdown-menu">
-    <a (click)="goTo('perfil')">Mi perfil</a>
-    <a (click)="goTo('compras')">Mis compras</a>
-    <a (click)="goTo('favoritos')">Favoritos</a>
-    <a (click)="logout()">Cerrar sesión</a>
-  </div>
-</div>
+<router-outlet></router-outlet>
+
 
 <router-outlet></router-outlet>
