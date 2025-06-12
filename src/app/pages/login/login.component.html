@@ -1,6 +1,9 @@
 <div class="login-container">
   <div class="login-card">
     <h2>Iniciar Sesión</h2>
+
+    <p *ngIf="errorMsg" class="error animated-error">{{ errorMsg }}</p>
+
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm" name="loginForm">
       <label for="email">Correo Electrónico</label>
       <input
@@ -24,5 +27,8 @@
 
       <button type="submit">Entrar</button>
     </form>
+    <div *ngIf="showSuccess" class="toast">
+      ✅ Inicio de sesión exitoso. Redirigiendo...
+    </div>
   </div>
 </div>
