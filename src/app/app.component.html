@@ -1,15 +1,16 @@
-
 <app-navbar *ngIf="isPublicRoute()"></app-navbar>
 
-
 <app-navbar-trabajador *ngIf="isPrivateRoute()"></app-navbar-trabajador>
-
 
 <div *ngIf="isPublicRoute() && router.url !== '/login'" class="info-banner">
   <span [innerHTML]="currentMessage" [ngClass]="bannerClass"></span>
 </div>
 
-<router-outlet></router-outlet>
-
+<!-- 🚨 Aviso de sesión a punto de expirar -->
+<div *ngIf="showSessionWarning" class="session-warning">
+  <p>⚠️ Tu sesión está por expirar. ¿Deseas renovarla?</p>
+  <button (click)="renovarSesion()">Renovar sesión</button>
+  <button class="close-btn" (click)="cerrarAviso()">X</button>
+</div>
 
 <router-outlet></router-outlet>

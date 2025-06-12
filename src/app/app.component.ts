@@ -5,24 +5,26 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NavbarTrabajadorComponent } from './shared/navbar-trabajador/navbar-trabajador.component';
-
+import { AuthService } from './services/auth.service'; // 👈 nuevo
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent,CommonModule,NavbarTrabajadorComponent],
+  imports: [RouterOutlet, NavbarComponent, CommonModule, NavbarTrabajadorComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  public showSessionWarning = false; // 👈 para mostrar aviso
+
   public isPublicRoute(): boolean {
     return !['/admin', '/vendedor', '/bodeguero', '/contador'].includes(this.router.url);
   }
-  
+
   public isPrivateRoute(): boolean {
     return ['/admin', '/vendedor', '/bodeguero', '/contador'].includes(this.router.url);
   }
-  
+
   private messages = [
     '🛻 <strong>Retiro en sucursal o envío a domicilio.</strong> ¡Tú decides!',
     '🔧 <strong>Tenemos todo lo que buscas</strong> en ferretería y construcción.',
@@ -36,12 +38,12 @@ export class AppComponent {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    public router: Router
+    public router: Router,
+    private authService: AuthService // 👈 inyectamos AuthService
   ) {
-    
     if (isPlatformBrowser(this.platformId)) {
       setInterval(() => {
-        if (this.router.url !== '/login') { 
+        if (this.router.url !== '/login') {
           this.bannerClass = 'fade-enter';
           setTimeout(() => {
             this.index = (this.index + 1) % this.messages.length;
@@ -50,8 +52,19 @@ export class AppComponent {
           }, 100);
         }
       }, 4000);
+
+      this.authService.sessionExpiring$.subscribe(() => {
+        this.showSessionWarning = true;
+      });
     }
   }
-  
-  
+
+  renovarSesion(): void {
+    this.authService.renewSession();
+    this.showSessionWarning = false;
+  }
+
+  cerrarAviso(): void {
+    this.showSessionWarning = false;
+  }
 }
