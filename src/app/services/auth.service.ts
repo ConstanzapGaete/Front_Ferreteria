@@ -14,7 +14,6 @@ export class AuthService {
   private loggedInSubject!: BehaviorSubject<boolean>;
   public isLoggedIn$!: Observable<boolean>;
 
-  // Nuevo subject para aviso de expiración inminente
   private sessionExpiringSubject = new Subject<void>();
   public sessionExpiring$ = this.sessionExpiringSubject.asObservable();
 
@@ -40,7 +39,7 @@ export class AuthService {
           this.warningShown = true;
           this.sessionExpiringSubject.next();
         }
-      }, 10000); // chequea cada 10 segundos
+      }, 10000);
     }
   }
 
@@ -67,7 +66,7 @@ export class AuthService {
   notifyLogin(token: string): void {
     localStorage.setItem('token', token);
 
-    const expiry = new Date().getTime() + 10 * 1000; // 10 segundos para pruebas
+    const expiry = new Date().getTime() + 15 * 60 * 1000;
     localStorage.setItem('token_expiry', expiry.toString());
 
     this.warningShown = false;
@@ -75,7 +74,7 @@ export class AuthService {
   }
 
   renewSession(): void {
-    const expiry = new Date().getTime() + 10 * 1000; // 10 segundos para pruebas
+    const expiry = new Date().getTime() + 15 * 60 * 1000;
     localStorage.setItem('token_expiry', expiry.toString());
     this.warningShown = false;
   }

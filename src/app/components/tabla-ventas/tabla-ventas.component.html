@@ -1,26 +1,9 @@
 <section class="tabla-ventas">
   <h2>Listado de Ventas</h2>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Cliente</th>
-        <th>Total</th>
-        <th>Fecha</th>
-        <th>Tipo de Entrega</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let venta of ventas">
-        <td>{{ venta.id }}</td>
-        <td>{{ venta.cliente }}</td>
-        <td>{{ venta.total | currency:'CLP' }}</td>
-        <td>{{ venta.fecha }}</td>
-        <td>{{ venta.tipoEntrega }}</td>
-        <td>{{ venta.estado }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <section class="tabla-ventas">
+    <div *ngIf="pdfUrl" style="margin-top: 1rem;">
+      <iframe [src]="pdfUrl" width="100%" height="600px" style="border: 1px solid #ccc;"></iframe>
+    </div>
+  </section>
 </section>
