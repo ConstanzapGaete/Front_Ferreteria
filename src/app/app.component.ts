@@ -5,17 +5,18 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NavbarTrabajadorComponent } from './shared/navbar-trabajador/navbar-trabajador.component';
-import { AuthService } from './services/auth.service'; // 👈 nuevo
+import { AuthService } from './services/auth.service';
+import { FooterComponent } from './shared/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, CommonModule, NavbarTrabajadorComponent],
+  imports: [RouterOutlet, NavbarComponent, CommonModule, NavbarTrabajadorComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  public showSessionWarning = false; // 👈 para mostrar aviso
+  public showSessionWarning = false;
 
   public isPublicRoute(): boolean {
     return !['/admin', '/vendedor', '/bodeguero', '/contador'].includes(this.router.url);
@@ -39,7 +40,7 @@ export class AppComponent {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     public router: Router,
-    private authService: AuthService // 👈 inyectamos AuthService
+    private authService: AuthService
   ) {
     if (isPlatformBrowser(this.platformId)) {
       setInterval(() => {

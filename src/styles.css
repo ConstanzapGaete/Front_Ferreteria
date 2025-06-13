@@ -67,18 +67,22 @@
     font-weight: 500;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-html, body {
-  height: 100%;
-  margin: 0;
-}
 
-app-root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+  html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
 
-main {
-  flex: 1;
-  padding-bottom: 4rem; 
-}
+  app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
