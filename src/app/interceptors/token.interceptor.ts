@@ -10,7 +10,12 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
+    let token: string | null = null;
+
+    // Solo acceder a localStorage si estamos en el navegador
+    if (typeof window !== 'undefined') {
+      token = localStorage.getItem('token');
+    }
 
     if (token) {
       const authReq = req.clone({

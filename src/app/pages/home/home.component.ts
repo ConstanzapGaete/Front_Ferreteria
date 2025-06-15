@@ -1,46 +1,73 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { HomeService } from '../../services/home.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
-  constructor(private router: Router) {}
+export class HomeComponent implements OnInit {
+  categorias: any[] = [];
+  todasLasCategorias: any[] = [];
+  productos: any[] = [];
+  mostrarTodasCategorias = false;
 
-  categories = [
-    {
-      name: 'Herramientas Eléctricas',
-      img: 'assets/images/cat-herramientas.jpg'
-    },
-    {
-      name: 'Materiales de Construcción',
-      img: 'assets/images/cat-materiales.jpg'
-    },
-    {
-      name: 'Pinturas y Barnices',
-      img: 'assets/images/cat-pinturas.jpg'
-    },
-    {
-      name: 'Tornillos y Anclajes',
-      img: 'assets/images/cat-tornillos.jpg'
-    },
-    {
-      name: 'Adhesivos y Sellantes',
-      img: 'assets/images/cat-adhesivos.jpg'
-    },
-    {
-      name: 'Herramientas Manuales',
-      img: 'assets/images/cat-manuales.png'
+  private homeService = inject(HomeService);
+
+  ngOnInit(): void {
+    this.homeService.getProductos().subscribe((res) => {
+      const productos = Array.isArray(res) ? res : res?.data?.data;
+      if (Array.isArray(productos)) {
+        this.productos = productos.slice(0, 6).map(p => ({
+          ...p,
+          nombre: this.decodeLatin1(p.nombre),
+          descripcion: this.decodeLatin1(p.descripcion),
+          imagen_url: this.fixImagePath(p.imagen_url)
+        }));
+      } else {
+        console.error('Formato de respuesta inesperado (productos)', res);
+      }
+    });
+
+    this.homeService.getCategorias().subscribe((res) => {
+      const categorias = Array.isArray(res) ? res : res?.data?.data;
+      if (Array.isArray(categorias)) {
+        this.todasLasCategorias = categorias.map(c => ({
+          ...c,
+          nombre: this.decodeLatin1(c.nombre),
+          descripcion: this.decodeLatin1(c.descripcion)
+        }));
+        this.categorias = this.todasLasCategorias.slice(0, 3);
+      } else {
+        console.error('Formato de respuesta inesperado (categorías)', res);
+      }
+    });
+  }
+
+  alternarCategorias(): void {
+    this.mostrarTodasCategorias = !this.mostrarTodasCategorias;
+    this.categorias = this.mostrarTodasCategorias
+      ? this.todasLasCategorias
+      : this.todasLasCategorias.slice(0, 3);
+  }
+
+  private decodeLatin1(str: string): string {
+    try {
+      return decodeURIComponent(escape(str));
+    } catch {
+      return str;
     }
-  ];
+  }
 
-  irACatalogo() {
-    this.router.navigate(['/catalogo']);
+  private fixImagePath(path: string): string {
+    if (!path) return '';
+    if (path.startsWith('assets/') || path.startsWith('/assets/')) {
+      return path.replace(/^\/?/, '');
+    }
+    return 'assets/images/' + path;
   }
 }
-

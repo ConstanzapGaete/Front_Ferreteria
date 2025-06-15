@@ -1,19 +1,32 @@
-<main>
-  <div class="categories">
-    <h2>Categorías Destacadas</h2>
-    <p class="subtitle">Lo más buscado para tu obra y proyectos en casa</p>
-
-    <div class="category-grid">
-      <div
-        class="category"
-        *ngFor="let cat of categories"
-        (click)="irACatalogo()"
-        role="button"
-        tabindex="0"
-      >
-        <img [src]="cat.img" [alt]="cat.name" />
-        <span>{{ cat.name }}</span>
-      </div>
+<section class="categorias">
+  <h2 style="text-align: center;">Categorías Destacadas</h2>
+  <div class="grid">
+    <div *ngFor="let c of categorias" class="card">
+      <h3>{{ c.nombre }}</h3>
+      <p>{{ c.descripcion }}</p>
     </div>
   </div>
-</main>
+
+  <div style="text-align: center; margin-top: 1rem;">
+    <button (click)="alternarCategorias()" class="btn-ver-mas">
+      {{ mostrarTodasCategorias ? 'Ver menos' : 'Ver todas las categorías' }}
+    </button>
+  </div>
+</section>
+
+<section class="productos">
+  <h2 style="text-align: center;">Productos Destacados</h2>
+  <div class="grid">
+    <div *ngFor="let p of productos" class="card">
+      <img
+        *ngIf="p.imagenUrl"
+        [src]="p.imagenUrl"
+        alt="{{ p.nombre }}"
+        style="width: 100%; height: auto; object-fit: cover;"
+      />
+      <h3>{{ p.nombre }}</h3>
+      <p>{{ p.descripcion }}</p>
+      <p><strong>Precio: </strong>${{ p.precioActual | number: '1.0-0' }}</p>
+    </div>
+  </div>
+</section>
