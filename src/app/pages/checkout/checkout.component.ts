@@ -164,8 +164,8 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    const password = this.deseaRegistrarse ? clave : `inv_${rut.replace('-', '').replace('.', '')}`;
-    const rol = this.deseaRegistrarse ? 2 : 0;
+    // Si no desea registrarse, generamos una contraseña temporal
+    const password = this.deseaRegistrarse ? clave : `inv_${rut.replace('-', '')}`;
     const direccionCompleta = `${this.datosDespacho.calle} ${this.datosDespacho.numero}, ${this.datosDespacho.dpto}`.trim();
 
     const datos = {
@@ -181,7 +181,8 @@ export class CheckoutComponent implements OnInit {
       ultimoLogin: new Date().toISOString().slice(0, 10),
       rut,
       comuna: this.datosDespacho.comuna_id,
-      rol,
+      rol: 2, // Siempre rol cliente
+      activo: this.deseaRegistrarse, // true si desea registrarse, false si solo compra como invitado
       sucursal: 1
     };
 
@@ -190,17 +191,15 @@ export class CheckoutComponent implements OnInit {
         console.log('Usuario creado:', usuarioCreado);
         const userId = usuarioCreado?.data?.id;
         if (userId) {
-          if (isPlatformBrowser(this.platformId)) {
-            alert('Usuario registrado correctamente.');
-            this.procesarPedido(userId);
-          }
+          alert('Usuario registrado correctamente.');
+          this.procesarPedido(userId);
         } else {
           console.error('La respuesta no contiene el ID del usuario.');
         }
       },
       error: (error) => {
         console.error('Error al registrar usuario:', error);
-        if (isPlatformBrowser(this.platformId)) alert('Error al registrar el usuario. Verifica los datos.');
+        alert('Error al registrar el usuario. Verifica los datos.');
       }
     });
   }
