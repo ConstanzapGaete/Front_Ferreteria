@@ -1,8 +1,65 @@
 <section class="catalogo">
-  <h2 style="text-align: center;">Catálogo de Productos</h2>
+  <h2>Catálogo de Productos</h2>
 
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <!-- Fila 1: Buscador y orden -->
+    <div class="fila-filtros">
+      <input
+        type="text"
+        [(ngModel)]="filtroTexto"
+        (input)="buscar()"
+        placeholder="Buscar por nombre o descripción"
+        class="input-busqueda"
+      />
+
+      <select [(ngModel)]="ordenSeleccionado" (change)="cambiarOrden(ordenSeleccionado)" class="select-orden">
+        <option value="default">Ordenar por</option>
+        <option value="precioAsc">Precio: menor a mayor</option>
+        <option value="precioDesc">Precio: mayor a menor</option>
+        <option value="marcaAZ">Marca A-Z</option>
+        <option value="marcaZA">Marca Z-A</option>
+      </select>
+    </div>
+
+    <!-- Fila 2: Filtro por marca y categoría -->
+    <div class="fila-filtros">
+      <div class="dropdown">
+        <button class="dropbtn" (click)="mostrarFiltroMarcas = !mostrarFiltroMarcas">
+          Filtrar por Marca ⏷
+        </button>
+        <div *ngIf="mostrarFiltroMarcas" class="dropdown-content">
+          <label *ngFor="let marca of marcasDisponibles">
+            <input
+              type="checkbox"
+              [checked]="filtroMarcas.includes(marca)"
+              (change)="toggleMarca(marca)"
+            />
+            {{ marca }}
+          </label>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn" (click)="mostrarFiltroCategorias = !mostrarFiltroCategorias">
+          Filtrar por Categoría ⏷
+        </button>
+        <div *ngIf="mostrarFiltroCategorias" class="dropdown-content">
+          <label *ngFor="let categoria of categoriasDisponibles">
+            <input
+              type="checkbox"
+              [checked]="filtroCategorias.includes(categoria)"
+              (change)="toggleCategoria(categoria)"
+            />
+            {{ categoria }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid de productos -->
   <div class="grid">
-    <!-- Productos reales -->
     <div *ngFor="let p of productosFiltrados" class="card">
       <img
         *ngIf="p.imagenUrl"
@@ -13,12 +70,30 @@
       <h3>{{ p.nombre }}</h3>
       <p>{{ p.descripcion }}</p>
       <p><strong>Precio: </strong>${{ p.precioActual | number: '1.0-0' }}</p>
+
+      <!-- NUEVO: Botón agregar al carrito o controles de cantidad -->
+      <div class="carrito-controls">
+        <ng-container *ngIf="p.cantidadEnCarrito === 0; else controles">
+          <button class="btn-carrito" (click)="agregarAlCarrito(p)">
+            Agregar al carrito
+          </button>
+        </ng-container>
+
+        <ng-template #controles>
+          <div class="cantidad-control">
+            <button (click)="decrementarCantidad(p)">−</button>
+            <span>{{ p.cantidadEnCarrito }}</span>
+            <button (click)="incrementarCantidad(p)">+</button>
+          </div>
+        </ng-template>
+      </div>
     </div>
 
-    <!-- Placeholders invisibles para mantener la altura -->
+    <!-- Placeholders invisibles -->
     <div *ngFor="let i of placeholders" class="card placeholder"></div>
   </div>
 
+  <!-- Paginación -->
   <div class="paginacion">
     <button
       *ngFor="let pagina of totalPaginas"
