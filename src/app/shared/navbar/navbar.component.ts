@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service'; // ✅ servicio del carrito
 
 @Component({
   selector: 'app-navbar',
@@ -23,7 +24,10 @@ export class NavbarComponent {
   userRole: string | null = null;
   menuOpen: boolean = false;
 
+  cartCount: number = 0; // ✅ contador reactivo
+
   private authService: AuthService = inject(AuthService);
+  private cartService: CartService = inject(CartService); // ✅
   private router: Router = inject(Router);
 
   constructor() {
@@ -45,7 +49,7 @@ export class NavbarComponent {
         const jwtHelper = new JwtHelperService();
         if (token && !jwtHelper.isTokenExpired(token)) {
           const decoded: any = jwtHelper.decodeToken(token);
-          console.log(decoded);  // <-- para verificar contenido del token
+          console.log(decoded);
           this.userEmail = decoded.sub;
           this.userRole = decoded.rol || null;
         }
@@ -53,6 +57,11 @@ export class NavbarComponent {
         this.userEmail = null;
         this.userRole = null;
       }
+    });
+
+    // ✅ Suscripción al contador del carrito
+    this.cartService.cartCount$.subscribe(count => {
+      this.cartCount = count;
     });
   }
 

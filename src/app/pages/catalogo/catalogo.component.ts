@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CatalogoService } from '../../services/catalogo.service';
 import { FormsModule } from '@angular/forms';
+import { CartService } from '../../services/cart.service'; // 👈 Agregado
 
 @Component({
   selector: 'app-catalogo',
@@ -30,6 +31,7 @@ export class CatalogoComponent implements OnInit {
   mostrarFiltroCategorias: boolean = false;
 
   private catalogoService = inject(CatalogoService);
+  private cartService = inject(CartService); // 👈 Inyectado
 
   ngOnInit(): void {
     this.catalogoService.getProductosPaginados(1, 1000).subscribe((res) => {
@@ -159,21 +161,26 @@ export class CatalogoComponent implements OnInit {
     this.filtrarProductos();
   }
 
-  // NUEVO: Agregar al carrito
   agregarAlCarrito(producto: any): void {
     if (producto.cantidadEnCarrito === 0) {
       producto.cantidadEnCarrito = 1;
+      this.cartService.addToCart(producto); // 👈 Se refleja en localStorage
       alert('Producto agregado al carrito');
     }
   }
 
   incrementarCantidad(producto: any): void {
     producto.cantidadEnCarrito++;
+    this.cartService.updateQuantity(producto.id, producto.cantidadEnCarrito); // 👈 Actualiza en storage
   }
 
   decrementarCantidad(producto: any): void {
     if (producto.cantidadEnCarrito > 1) {
       producto.cantidadEnCarrito--;
+      this.cartService.updateQuantity(producto.id, producto.cantidadEnCarrito); // 👈 Disminuye
+    } else if (producto.cantidadEnCarrito === 1) {
+      producto.cantidadEnCarrito = 0;
+      this.cartService.removeFromCart(producto.id); // 👈 Se quita del carrito
     }
   }
 

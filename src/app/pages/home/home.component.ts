@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core'; 
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeService } from '../../services/home.service';
+import { Router } from '@angular/router';
 
-@Component({
+@Component({  
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, HttpClientModule],
@@ -11,12 +12,13 @@ import { HomeService } from '../../services/home.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  categorias: any[] = [];
-  todasLasCategorias: any[] = [];
-  productos: any[] = [];
+  categorias: any[] = []; 
+  todasLasCategorias: any[] = []; 
+  productos: any[] = []; 
   mostrarTodasCategorias = false;
 
   private homeService = inject(HomeService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.homeService.getProductos().subscribe((res) => {
@@ -27,7 +29,7 @@ export class HomeComponent implements OnInit {
           nombre: this.decodeLatin1(p.nombre),
           descripcion: this.decodeLatin1(p.descripcion),
           imagen_url: this.fixImagePath(p.imagen_url)
-        }));
+        }))
       } else {
         console.error('Formato de respuesta inesperado (productos)', res);
       }
@@ -40,12 +42,16 @@ export class HomeComponent implements OnInit {
           ...c,
           nombre: this.decodeLatin1(c.nombre),
           descripcion: this.decodeLatin1(c.descripcion)
-        }));
+        }))
         this.categorias = this.todasLasCategorias.slice(0, 3);
       } else {
         console.error('Formato de respuesta inesperado (categorías)', res);
       }
     });
+  }
+
+  irACatalogo(): void {
+    this.router.navigate(['/catalogo']); 
   }
 
   alternarCategorias(): void {
@@ -57,7 +63,7 @@ export class HomeComponent implements OnInit {
 
   private decodeLatin1(str: string): string {
     try {
-      return decodeURIComponent(escape(str));
+      return decodeURIComponent(escape(str)); 
     } catch {
       return str;
     }

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { CartService } from '../../services/cart.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../../services/cart.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,42 +8,45 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './carrito.component.html',
-  styleUrl: './carrito.component.css'
+  styleUrls: ['./carrito.component.css']
 })
-export class CarritoComponent {
+export class CarritoComponent implements OnInit {
   items: any[] = [];
 
-  constructor(private cartService: CartService, private router: Router) {}
+  private cartService = inject(CartService);
+  private router = inject(Router);
 
-  calcularTotal() {
-    return this.items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-  }
-
-  calcularCantidadTotal() {
-    return this.items.reduce((acc, item) => acc + item.cantidad, 0);
-  }
-  
-  sumaItem(index: number) {
-  this.items[index].cantidad++;
-}
-
-  restaItem(index: number) {
-    if (this.items[index].cantidad > 1) {
-      this.items[index].cantidad--;
-    }
-  }
-
-  eliminarItem(index: number) {
-    this.items.splice(index, 1);
-  }
-
-  irACheckout() {
-  this.router.navigate(['/checkout']);
-  }
-
-  
-  ngOnInit() {
+  ngOnInit(): void {
     this.items = this.cartService.getItems();
-    // con el back this.http.get('/api/carrito').subscribe(data => this.items = data);
+  }
+
+  calcularCantidadTotal(): number {
+    return this.items.reduce((total, item) => total + item.cantidad, 0);
+  }
+
+  calcularTotal(): number {
+    return this.items.reduce((total, item) => total + item.cantidad * item.precio, 0);
+  }
+
+  sumaItem(index: number): void {
+    const producto = this.items[index];
+    this.cartService.updateQuantity(producto.id, producto.cantidad + 1);
+    this.items = this.cartService.getItems(); // Refrescar vista
+  }
+
+  restaItem(index: number): void {
+    const producto = this.items[index];
+    this.cartService.updateQuantity(producto.id, producto.cantidad - 1);
+    this.items = this.cartService.getItems(); // Refrescar vista
+  }
+
+  eliminarItem(index: number): void {
+    const producto = this.items[index];
+    this.cartService.removeFromCart(producto.id);
+    this.items = this.cartService.getItems(); // Refrescar vista
+  }
+
+  irACheckout(): void {
+    this.router.navigate(['/checkout']);
   }
 }

@@ -16,7 +16,11 @@
   <div class="navbar-right">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
     <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
-    <a routerLink="/carrito" routerLinkActive="active">🛒</a>
+
+    <a routerLink="/carrito" routerLinkActive="active" class="cart-icon">
+      🛒
+      <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
+    </a>
 
     <!-- Botón dinámico según sesión -->
     <ng-container *ngIf="isLoggedIn; else loginBtn">
