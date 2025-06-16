@@ -205,31 +205,61 @@ export class CheckoutComponent implements OnInit {
   }
 
   procesarPedido(clienteId: number) {
+    const fechaActual = new Date().toISOString().slice(0, 10);
+    const numeroAleatorio = Math.floor(100 + Math.random() * 900);
+    const codigoPedido = `PED-${fechaActual}-${numeroAleatorio}`;
+
+    const subtotal = this.totalProductos;
+    const descuento = 0;
+    const iva = Math.round((subtotal - descuento) * 0.19);
+    const total = this.tipoEntrega === 'delivery' ? subtotal + iva + 3500 : subtotal + iva;
+
+    const direccionEntrega = this.tipoEntrega === 'delivery'
+      ? `${this.datosDespacho.calle} ${this.datosDespacho.numero}, ${this.datosDespacho.dpto}`.trim()
+      : 'Retiro en tienda';
+
     const pedido = {
+      codigo: codigoPedido,
+      fechaPedido: fechaActual,
+      direccionEntrega,
+      subtotal,
+      descuento,
+      iva,
+      total,
+      nota: '',
       clienteId,
-      tipoEntrega: this.tipoEntrega.toUpperCase(),
-      direccionEntrega: this.tipoEntrega === 'delivery'
-        ? `${this.datosDespacho.calle} ${this.datosDespacho.numero}, ${this.datosDespacho.dpto}`.trim()
-        : null,
-      productos: this.carrito.map(item => ({
-        productoId: item.id,
-        cantidad: item.cantidad
-      })),
-      total: this.totalFinal,
-      metodoPago: this.metodoPago
+      vendedorId: 2,
+      estadoId: 1,
+      tipoEntregaId: this.tipoEntrega === 'delivery' ? 1 : 2,
+      sucursalId: 1,
+      metodoPago: this.metodoPago === 'transferencia' ? 2 : 1
     };
 
-    this.http.post<any>('http://localhost:3000/java-api/pedido', pedido).subscribe({
+    console.log('Pedido a enviar:', pedido);
+
+    // --- NUEVO: preparar headers con token si existe ---
+    const token = isPlatformBrowser(this.platformId) ? localStorage.getItem('token') : null;
+
+    const headers: any = {
+      'Content-Type': 'application/json'
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    this.http.post<any>('http://localhost:3000/java-api/pedido', pedido, { headers }).subscribe({
       next: (response) => {
         if (isPlatformBrowser(this.platformId)) {
           alert('Pedido realizado con éxito.');
           this.cartService.clearCart();
-          this.router.navigate(['/pago', response.id], {
+          this.router.navigate(['/pago', response?.data?.id], {
             queryParams: { metodo: this.metodoPago }
           });
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al realizar el pedido:', err);
         if (isPlatformBrowser(this.platformId)) alert('Error al realizar el pedido.');
       }
     });
