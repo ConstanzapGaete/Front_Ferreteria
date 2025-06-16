@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CatalogoService } from '../../services/catalogo.service';
 import { FormsModule } from '@angular/forms';
-import { CartService } from '../../services/cart.service'; // 👈 Agregado
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-catalogo',
@@ -31,7 +31,7 @@ export class CatalogoComponent implements OnInit {
   mostrarFiltroCategorias: boolean = false;
 
   private catalogoService = inject(CatalogoService);
-  private cartService = inject(CartService); // 👈 Inyectado
+  private cartService = inject(CartService);
 
   ngOnInit(): void {
     this.catalogoService.getProductosPaginados(1, 1000).subscribe((res) => {
@@ -44,7 +44,7 @@ export class CatalogoComponent implements OnInit {
           imagenUrl: this.fixImagePath(p.imagenUrl),
           marca: this.decodeLatin1(p.marca || 'Sin Marca'),
           categoria: this.decodeLatin1(p.categoria || 'Sin Categoría'),
-          cantidadEnCarrito: 0 // ← NUEVO
+          cantidadEnCarrito: 0 
         }));
 
         this.marcasDisponibles = [...new Set(this.productos.map(p => p.marca))];
@@ -164,23 +164,33 @@ export class CatalogoComponent implements OnInit {
   agregarAlCarrito(producto: any): void {
     if (producto.cantidadEnCarrito === 0) {
       producto.cantidadEnCarrito = 1;
-      this.cartService.addToCart(producto); // 👈 Se refleja en localStorage
+
+      const productoParaCarrito = {
+        id: producto.id,
+        nombre: producto.nombre,
+        precio: producto.precioActual, // 👈 este campo es clave
+        marca: producto.marca,
+        imagenUrl: producto.imagenUrl,
+        cantidad: 1
+      };
+
+      this.cartService.addToCart(productoParaCarrito);
       alert('Producto agregado al carrito');
     }
   }
 
   incrementarCantidad(producto: any): void {
     producto.cantidadEnCarrito++;
-    this.cartService.updateQuantity(producto.id, producto.cantidadEnCarrito); // 👈 Actualiza en storage
+    this.cartService.updateQuantity(producto.id, producto.cantidadEnCarrito);
   }
 
   decrementarCantidad(producto: any): void {
     if (producto.cantidadEnCarrito > 1) {
       producto.cantidadEnCarrito--;
-      this.cartService.updateQuantity(producto.id, producto.cantidadEnCarrito); // 👈 Disminuye
+      this.cartService.updateQuantity(producto.id, producto.cantidadEnCarrito);
     } else if (producto.cantidadEnCarrito === 1) {
       producto.cantidadEnCarrito = 0;
-      this.cartService.removeFromCart(producto.id); // 👈 Se quita del carrito
+      this.cartService.removeFromCart(producto.id);
     }
   }
 

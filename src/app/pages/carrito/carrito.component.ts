@@ -28,6 +28,10 @@ export class CarritoComponent implements OnInit {
     return this.items.reduce((total, item) => total + item.cantidad * item.precio, 0);
   }
 
+  calcularSubtotal(item: any): number {
+    return item.cantidad * item.precio;
+  }
+
   sumaItem(index: number): void {
     const producto = this.items[index];
     this.cartService.updateQuantity(producto.id, producto.cantidad + 1);

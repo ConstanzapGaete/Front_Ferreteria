@@ -6,11 +6,12 @@
 
       <div class="carrito-lista">
         <div class="carrito-item" *ngFor="let item of items; let i = index">
-          <img [src]="item.imagen" alt="{{ item.nombre }}" />
+          <img *ngIf="item.imagenUrl" [src]="item.imagenUrl" alt="{{ item.nombre }}" />
           <div class="carrito-info">
             <h3>{{ item.nombre }}</h3>
             <p class="marca">{{ item.marca }}</p>
-            <p class="precio">{{ item.precio | currency:'CLP' }}</p>
+            <p class="precio">Precio unitario: {{ item.precio | currency:'CLP' }}</p>
+            <p class="subtotal">Subtotal: {{ calcularSubtotal(item) | currency:'CLP' }}</p>
           </div>
           <div class="cantidad-controles">
             <button (click)="restaItem(i)">−</button>

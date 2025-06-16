@@ -3,7 +3,7 @@
 
   <div class="checkout-grid">
 
-  
+    <!-- FORMULARIO DE ENTREGA -->
     <div class="form-entrega">
       <h3>Tipo de entrega</h3>
 
@@ -14,17 +14,24 @@
 
       <label>
         <input type="radio" name="entrega" value="delivery" [(ngModel)]="tipoEntrega" />
-        Delivery (+$3.000)
+        Delivery (+$3.500)
       </label>
-
 
       <div *ngIf="tipoEntrega === 'delivery'" class="formulario-despacho">
         <h4>Datos de despacho</h4>
 
         <label for="region">Región</label>
-        <select id="region" [(ngModel)]="datosDespacho.region" required>
-          <option value="" disabled selected>Selecciona una región</option>
-          <option *ngFor="let region of regiones" [value]="region">{{ region }}</option>
+        <select id="region" [(ngModel)]="datosDespacho.region" (change)="onRegionChange()">
+          <option value="">Seleccione una región</option>
+          <option *ngFor="let region of regiones" [value]="region.regionId">
+            {{ region.nombre }}
+          </option>
+        </select>
+
+        <label for="comuna">Comuna:</label>
+        <select id="comuna" [(ngModel)]="datosDespacho.comuna_id" name="comuna">
+          <option value="0" disabled>Seleccione una comuna</option>
+          <option *ngFor="let comuna of comunas" [value]="comuna.id">{{ comuna.nombre }}</option>
         </select>
 
         <label for="calle">Calle</label>
@@ -38,11 +45,33 @@
       </div>
     </div>
 
+    <!-- FORMULARIO DE INVITADO -->
+    <div *ngIf="!estaLogueado" class="form-invitado">
+      <h3>Tus datos</h3>
 
+      <label for="nombre">Nombre completo</label>
+      <input id="nombre" type="text" [(ngModel)]="datosUsuario.nombreCompleto" required />
+
+      <label for="correo">Correo electrónico</label>
+      <input id="correo" type="email" [(ngModel)]="datosUsuario.correo" required />
+
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" type="text" [(ngModel)]="datosUsuario.telefono" required />
+
+      <label for="rut">RUT</label>
+      <input id="rut" type="text" [(ngModel)]="datosUsuario.rut" required />
+
+      <label>
+        <input type="checkbox" [(ngModel)]="deseaRegistrarse" />
+        Deseo registrarme como cliente para futuras compras
+      </label>
+    </div>
+
+    <!-- RESUMEN -->
     <div class="resumen-pago">
       <h3>Resumen</h3>
       <p>Productos: <strong>{{ totalProductos | currency:'CLP' }}</strong></p>
-      <p *ngIf="tipoEntrega === 'delivery'">Despacho: <strong>{{ 3000 | currency:'CLP' }}</strong></p>
+      <p *ngIf="tipoEntrega === 'delivery'">Despacho: <strong>{{ 3500 | currency:'CLP' }}</strong></p>
       <p><strong>Total a pagar: {{ totalFinal | currency:'CLP' }}</strong></p>
 
       <button class="btn-pagar" (click)="pagarCompra()">Pagar compra</button>

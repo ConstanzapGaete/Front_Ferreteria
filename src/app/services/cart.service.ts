@@ -40,7 +40,15 @@ export class CartService {
     if (existing) {
       existing.cantidad += 1;
     } else {
-      this.items.push({ ...product, cantidad: 1 });
+      // Asegúrate de que se guarde el precio, nombre, imagen y marca
+      this.items.push({
+        id: product.id,
+        nombre: product.nombre,
+        precio: product.precio,
+        marca: product.marca,
+        imagenUrl: product.imagenUrl,
+        cantidad: 1
+      });
     }
     this.saveCart();
   }
@@ -76,5 +84,9 @@ export class CartService {
 
   getTotalItems(): number {
     return this.items.reduce((total, item) => total + item.cantidad, 0);
+  }
+
+  getTotalPrice(): number {
+    return this.items.reduce((total, item) => total + item.precio * item.cantidad, 0);
   }
 }
