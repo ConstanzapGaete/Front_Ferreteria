@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pago',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: './pago.component.html',
   styleUrls: ['./pago.component.css']
 })
@@ -12,7 +16,7 @@ export class PagoComponent implements OnInit {
   metodoPago: string = '';
   urlTransbank: string = '';
   comprobante!: File;
-  clienteId!: number; // Asumimos que este dato está disponible para subida del comprobante
+  clienteId!: number; // Asegúrate de asignar esto en tu flujo real
   mensajeEstado: string = '';
   subiendo = false;
 
@@ -23,18 +27,27 @@ export class PagoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pedidoId = +this.route.snapshot.paramMap.get('id')!;
-    this.metodoPago = this.route.snapshot.queryParamMap.get('metodo') || '';
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const metodoParam = this.route.snapshot.queryParamMap.get('metodo');
 
-    // Si el método es transbank, solicitamos la URL al backend
-    if (this.metodoPago === 'transbank') {
-      this.crearTransaccionWebpay();
+    if (idParam) {
+      this.pedidoId = +idParam;
+    }
+
+    if (metodoParam) {
+      this.metodoPago = metodoParam;
+
+      if (this.metodoPago === 'transbank') {
+        this.crearTransaccionWebpay();
+      }
+    } else {
+      console.error('No se especificó el método de pago en la URL');
     }
   }
 
   crearTransaccionWebpay() {
     const body = {
-      monto: 10000, // Reemplaza por el monto real del pedido
+      monto: 10000, // Reemplaza con el valor real si lo tienes
       ordenCompra: `ORD${this.pedidoId}`,
       sesionId: `SES${this.pedidoId}`
     };
@@ -64,11 +77,11 @@ export class PagoComponent implements OnInit {
 
     this.subiendo = true;
 
-    // Simulamos que se sube a un servidor y obtenemos una URL
+    // Simulación de subida real
     const urlSimulada = `https://miservidor.com/comprobantes/${this.comprobante.name}`;
 
     const body = {
-      clienteId: this.clienteId, // Asegúrate de tener este valor
+      clienteId: this.clienteId, // Reemplaza con el valor real desde sesión si es necesario
       url: urlSimulada,
       tipo: 'pago'
     };

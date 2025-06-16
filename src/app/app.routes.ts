@@ -18,7 +18,8 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'checkout', component: CheckoutComponent },
-  { path: 'pago', component: PagoComponent },
+  { path: 'pago/:id', loadComponent: () => import('./pages/pago/pago.component').then(m => m.PagoComponent)},
+
 
   { path: 'admin', component: HomeAdminComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
   { path: 'vendedor', component: HomeVendedorComponent, canActivate: [authGuard], data: { roles: ['VENDEDOR', 'ADMIN'] } },

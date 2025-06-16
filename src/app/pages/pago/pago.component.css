@@ -3,6 +3,9 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn-webpay,
@@ -12,11 +15,30 @@
   padding: 0.75rem 1.5rem;
   margin-top: 1rem;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-webpay:hover,
+.btn-subir:hover {
+  background-color: #0056b3;
 }
 
 .btn-subir[disabled] {
   background-color: gray;
   cursor: not-allowed;
+}
+
+.estado-mensaje {
+  margin-top: 1rem;
+  font-weight: 500;
+  color: green;
+}
+
+.error-text {
+  color: red;
+  font-weight: 600;
+  margin-top: 1rem;
 }
