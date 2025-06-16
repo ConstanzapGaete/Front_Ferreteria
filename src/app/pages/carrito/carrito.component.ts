@@ -12,12 +12,18 @@ import { Router } from '@angular/router';
 })
 export class CarritoComponent implements OnInit {
   items: any[] = [];
+  resumenProductos: string[] = [];
 
   private cartService = inject(CartService);
   private router = inject(Router);
 
   ngOnInit(): void {
     this.items = this.cartService.getItems();
+    this.generarResumen();
+  }
+
+  generarResumen(): void {
+    this.resumenProductos = this.items.map(item => `x${item.cantidad} ${item.nombre}`);
   }
 
   calcularCantidadTotal(): number {
@@ -35,19 +41,22 @@ export class CarritoComponent implements OnInit {
   sumaItem(index: number): void {
     const producto = this.items[index];
     this.cartService.updateQuantity(producto.id, producto.cantidad + 1);
-    this.items = this.cartService.getItems(); // Refrescar vista
+    this.items = this.cartService.getItems();
+    this.generarResumen();
   }
 
   restaItem(index: number): void {
     const producto = this.items[index];
     this.cartService.updateQuantity(producto.id, producto.cantidad - 1);
-    this.items = this.cartService.getItems(); // Refrescar vista
+    this.items = this.cartService.getItems();
+    this.generarResumen();
   }
 
   eliminarItem(index: number): void {
     const producto = this.items[index];
     this.cartService.removeFromCart(producto.id);
-    this.items = this.cartService.getItems(); // Refrescar vista
+    this.items = this.cartService.getItems();
+    this.generarResumen();
   }
 
   irACheckout(): void {

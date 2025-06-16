@@ -1,4 +1,5 @@
 <section class="checkout-container">
+  <button class="btn-volver" (click)="volver()">← Volver</button>
   <h2>Finalizar Compra</h2>
 
   <div class="checkout-grid">
@@ -21,16 +22,16 @@
         <h4>Datos de despacho</h4>
 
         <label for="region">Región</label>
-        <select id="region" [(ngModel)]="datosDespacho.region" (change)="onRegionChange()">
+        <select id="region" [(ngModel)]="datosDespacho.region" (change)="onRegionChange()" required>
           <option value="">Seleccione una región</option>
           <option *ngFor="let region of regiones" [value]="region.regionId">
             {{ region.nombre }}
           </option>
         </select>
 
-        <label for="comuna">Comuna:</label>
-        <select id="comuna" [(ngModel)]="datosDespacho.comuna_id" name="comuna">
-          <option value="0" disabled>Seleccione una comuna</option>
+        <label for="comuna">Ciudad</label>
+        <select id="comuna" [(ngModel)]="datosDespacho.comuna_id" name="comuna" required *ngIf="comunas.length > 0">
+          <option value="0" disabled>Seleccione una ciudad</option>
           <option *ngFor="let comuna of comunas" [value]="comuna.id">{{ comuna.nombre }}</option>
         </select>
 
@@ -70,6 +71,11 @@
     <!-- RESUMEN -->
     <div class="resumen-pago">
       <h3>Resumen</h3>
+      <ul>
+        <li *ngFor="let item of carrito">
+          x{{ item.cantidad }} {{ item.nombre }}
+        </li>
+      </ul>
       <p>Productos: <strong>{{ totalProductos | currency:'CLP' }}</strong></p>
       <p *ngIf="tipoEntrega === 'delivery'">Despacho: <strong>{{ 3500 | currency:'CLP' }}</strong></p>
       <p><strong>Total a pagar: {{ totalFinal | currency:'CLP' }}</strong></p>

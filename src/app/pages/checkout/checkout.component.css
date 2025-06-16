@@ -103,3 +103,12 @@
 .btn-pagar:hover {
   background-color: #0056b3;
 }
+
+.btn-volver {
+  position: absolute;
+  top: 7.8rem;
+  left: 10rem;
+  padding: 0.4rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}

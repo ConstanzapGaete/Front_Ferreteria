@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { UsuarioService } from '../../services/usuario.service';
@@ -44,6 +44,7 @@ export class CheckoutComponent implements OnInit {
     private cartService: CartService,
     private usuarioService: UsuarioService,
     private http: HttpClient,
+    private location: Location,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -56,6 +57,10 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.cargarRegiones();
+  }
+
+  volver() {
+    this.location.back();
   }
 
   cargarRegiones() {
@@ -77,9 +82,9 @@ export class CheckoutComponent implements OnInit {
         this.regiones = regionesCrudas.map((region: any) => ({
           ...region,
           nombre: decodeURIComponent(escape(region.nombre)),
-          ciudades: region.ciudades?.map((ciudad: any) => ({
-            id: ciudad.ciudadId,
-            nombre: decodeURIComponent(escape(ciudad.nombre))
+          ciudades: region.ciudades?.map((nombreCiudad: string, index: number) => ({
+            id: index + 1,
+            nombre: decodeURIComponent(escape(nombreCiudad))
           })) || []
         }));
       },
@@ -92,19 +97,7 @@ export class CheckoutComponent implements OnInit {
 
   onRegionChange() {
     const regionSeleccionada = this.regiones.find(r => r.regionId == this.datosDespacho.region);
-    console.log('Región seleccionada:', regionSeleccionada);
-
-    const ciudadesCrudas = regionSeleccionada?.ciudades || [];
-    console.log('Ciudades crudas:', ciudadesCrudas);
-
-    this.comunas = ciudadesCrudas.map((ciudad: any) => {
-      const id = ciudad?.ciudadId || ciudad?.id || null;
-      const nombre = decodeURIComponent(escape(ciudad?.nombre || ''));
-
-      return { id, nombre };
-    });
-
-    console.log('Comunas generadas:', this.comunas);
+    this.comunas = regionSeleccionada?.ciudades || [];
     this.datosDespacho.comuna_id = 0;
   }
 

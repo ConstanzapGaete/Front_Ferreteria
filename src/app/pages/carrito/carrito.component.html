@@ -25,6 +25,9 @@
 
       <div class="resumen-compra">
         <h3>Resumen de la compra</h3>
+        <ul>
+          <li *ngFor="let resumen of resumenProductos">{{ resumen }}</li>
+        </ul>
         <p>Productos: <strong>{{ calcularCantidadTotal() }}</strong></p>
         <p>Total: <strong>{{ calcularTotal() | currency:'CLP' }}</strong></p>
         <button class="btn-comprar" (click)="irACheckout()">Continuar compra</button>
