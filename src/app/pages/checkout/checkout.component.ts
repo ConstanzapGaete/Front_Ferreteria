@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-checkout',
@@ -14,6 +15,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CheckoutComponent implements OnInit {
   tipoEntrega: 'retiro' | 'delivery' = 'retiro';
+  metodoPago: 'transbank' | 'transferencia' = 'transbank';
   deseaRegistrarse: boolean = false;
   estaLogueado: boolean = false;
 
@@ -21,12 +23,14 @@ export class CheckoutComponent implements OnInit {
   comunas: { id: number, nombre: string }[] = [];
 
   datosUsuario = {
-    nombreCompleto: '',
+    nombre: '',
+    apellidop: '',
+    apellidom: '',
     correo: '',
     telefono: '',
     rut: '',
-    direccion: '',
-    clave: 'invitado'
+    fechaNacimiento: '',
+    clave: '' // puede ir vacío si no desea registrarse
   };
 
   datosDespacho = {
@@ -45,6 +49,7 @@ export class CheckoutComponent implements OnInit {
     private usuarioService: UsuarioService,
     private http: HttpClient,
     private location: Location,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -108,12 +113,11 @@ export class CheckoutComponent implements OnInit {
   }
 
   pagarCompra() {
-    if (this.tipoEntrega === 'delivery') {
-      const { region, comuna_id, calle, numero } = this.datosDespacho;
-      if (!region || !comuna_id || !calle.trim() || !numero.trim()) {
-        if (isPlatformBrowser(this.platformId)) alert('Por favor completa todos los campos obligatorios de despacho.');
-        return;
-      }
+    const { region, comuna_id, calle, numero } = this.datosDespacho;
+
+    if (!region || !comuna_id || !calle.trim() || !numero.trim()) {
+      if (isPlatformBrowser(this.platformId)) alert('Por favor completa todos los campos obligatorios de despacho.');
+      return;
     }
 
     if (!this.estaLogueado) {
@@ -126,29 +130,76 @@ export class CheckoutComponent implements OnInit {
   }
 
   registrarInvitado() {
-    const rol_id = this.deseaRegistrarse ? 2 : 0;
-    const activo = this.deseaRegistrarse;
+    const {
+      nombre,
+      apellidop,
+      apellidom,
+      correo,
+      telefono,
+      rut,
+      fechaNacimiento,
+      clave
+    } = this.datosUsuario;
 
+    if (
+      !nombre.trim() || !apellidop.trim() || !apellidom.trim() ||
+      !correo.trim() || !telefono.trim() || !rut.trim() || !fechaNacimiento
+    ) {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+
+    if (!/^\d{7,8}-[0-9kK]{1}$/.test(rut)) {
+      alert('Formato de RUT inválido. Debe ser como 12345678-9 o 12345678-K.');
+      return;
+    }
+
+    if (!/^\d+$/.test(telefono)) {
+      alert('El teléfono solo debe contener números.');
+      return;
+    }
+
+    if (this.deseaRegistrarse && clave.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    const password = this.deseaRegistrarse ? clave : `inv_${rut.replace('-', '').replace('.', '')}`;
+    const rol = this.deseaRegistrarse ? 2 : 0;
     const direccionCompleta = `${this.datosDespacho.calle} ${this.datosDespacho.numero}, ${this.datosDespacho.dpto}`.trim();
 
     const datos = {
-      nombreCompleto: this.datosUsuario.nombreCompleto,
-      correo: this.datosUsuario.correo,
-      telefono: this.datosUsuario.telefono,
-      rut: this.datosUsuario.rut,
+      nombre,
+      apellidop,
+      apellidom,
+      email: correo,
+      password,
       direccion: direccionCompleta,
-      clave: this.datosUsuario.clave,
-      activo,
-      rol_id,
-      comuna_id: this.datosDespacho.comuna_id
+      telefono,
+      fechaNacimiento,
+      fechaRegistro: new Date().toISOString().slice(0, 10),
+      ultimoLogin: new Date().toISOString().slice(0, 10),
+      rut,
+      comuna: this.datosDespacho.comuna_id,
+      rol,
+      sucursal: 1
     };
 
-    this.usuarioService.registrarInvitado(datos).subscribe({
+    this.http.post<any>('http://localhost:3000/java-api/usuario', datos).subscribe({
       next: (usuarioCreado) => {
-        if (isPlatformBrowser(this.platformId)) alert('Usuario registrado correctamente.');
-        this.procesarPedido(usuarioCreado.id);
+        console.log('Usuario creado:', usuarioCreado);
+        const userId = usuarioCreado?.data?.id;
+        if (userId) {
+          if (isPlatformBrowser(this.platformId)) {
+            alert('Usuario registrado correctamente.');
+            this.procesarPedido(userId);
+          }
+        } else {
+          console.error('La respuesta no contiene el ID del usuario.');
+        }
       },
-      error: () => {
+      error: (error) => {
+        console.error('Error al registrar usuario:', error);
         if (isPlatformBrowser(this.platformId)) alert('Error al registrar el usuario. Verifica los datos.');
       }
     });
@@ -165,13 +216,19 @@ export class CheckoutComponent implements OnInit {
         productoId: item.id,
         cantidad: item.cantidad
       })),
-      total: this.totalFinal
+      total: this.totalFinal,
+      metodoPago: this.metodoPago
     };
 
-    this.http.post('http://localhost:3000/java-api/pedido', pedido).subscribe({
-      next: () => {
-        if (isPlatformBrowser(this.platformId)) alert('Pedido realizado con éxito.');
-        this.cartService.clearCart();
+    this.http.post<any>('http://localhost:3000/java-api/pedido', pedido).subscribe({
+      next: (response) => {
+        if (isPlatformBrowser(this.platformId)) {
+          alert('Pedido realizado con éxito.');
+          this.cartService.clearCart();
+          this.router.navigate(['/pago', response.id], {
+            queryParams: { metodo: this.metodoPago }
+          });
+        }
       },
       error: () => {
         if (isPlatformBrowser(this.platformId)) alert('Error al realizar el pedido.');

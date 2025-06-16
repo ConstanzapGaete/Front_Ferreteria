@@ -10,6 +10,7 @@ import { CarritoComponent } from './pages/carrito/carrito.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { authGuard } from './guards/auth.guard';
 import { NoAutorizadoComponent } from './pages/no-autorizado/no-autorizado.component';
+import { PagoComponent } from './pages/pago/pago.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'checkout', component: CheckoutComponent },
+  { path: 'pago', component: PagoComponent },
 
   { path: 'admin', component: HomeAdminComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
   { path: 'vendedor', component: HomeVendedorComponent, canActivate: [authGuard], data: { roles: ['VENDEDOR', 'ADMIN'] } },

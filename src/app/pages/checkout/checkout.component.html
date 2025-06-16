@@ -18,10 +18,11 @@
         Delivery (+$3.500)
       </label>
 
-      <div *ngIf="tipoEntrega === 'delivery'" class="formulario-despacho">
-        <h4>Datos de despacho</h4>
+      <!-- SIEMPRE visible -->
+      <div class="formulario-despacho">
+        <h4>Dirección</h4>
 
-        <label for="region">Región</label>
+        <label for="region">Región *</label>
         <select id="region" [(ngModel)]="datosDespacho.region" (change)="onRegionChange()" required>
           <option value="">Seleccione una región</option>
           <option *ngFor="let region of regiones" [value]="region.regionId">
@@ -29,16 +30,16 @@
           </option>
         </select>
 
-        <label for="comuna">Ciudad</label>
+        <label for="comuna">Ciudad *</label>
         <select id="comuna" [(ngModel)]="datosDespacho.comuna_id" name="comuna" required *ngIf="comunas.length > 0">
           <option value="0" disabled>Seleccione una ciudad</option>
           <option *ngFor="let comuna of comunas" [value]="comuna.id">{{ comuna.nombre }}</option>
         </select>
 
-        <label for="calle">Calle</label>
+        <label for="calle">Calle *</label>
         <input id="calle" type="text" [(ngModel)]="datosDespacho.calle" required />
 
-        <label for="numero">Número</label>
+        <label for="numero">Número *</label>
         <input id="numero" type="text" [(ngModel)]="datosDespacho.numero" required />
 
         <label for="dpto">Dpto. / Casa / Oficina / Condominio (opcional)</label>
@@ -50,22 +51,36 @@
     <div *ngIf="!estaLogueado" class="form-invitado">
       <h3>Tus datos</h3>
 
-      <label for="nombre">Nombre completo</label>
-      <input id="nombre" type="text" [(ngModel)]="datosUsuario.nombreCompleto" required />
+      <label for="nombre">Nombre *</label>
+      <input id="nombre" type="text" [(ngModel)]="datosUsuario.nombre" required />
 
-      <label for="correo">Correo electrónico</label>
+      <label for="apellidop">Apellido paterno *</label>
+      <input id="apellidop" type="text" [(ngModel)]="datosUsuario.apellidop" required />
+
+      <label for="apellidom">Apellido materno *</label>
+      <input id="apellidom" type="text" [(ngModel)]="datosUsuario.apellidom" required />
+
+      <label for="correo">Correo electrónico *</label>
       <input id="correo" type="email" [(ngModel)]="datosUsuario.correo" required />
 
-      <label for="telefono">Teléfono</label>
+      <label for="telefono">Teléfono *</label>
       <input id="telefono" type="text" [(ngModel)]="datosUsuario.telefono" required />
 
-      <label for="rut">RUT</label>
+      <label for="rut">RUT *</label>
       <input id="rut" type="text" [(ngModel)]="datosUsuario.rut" required />
+
+      <label for="fechaNacimiento">Fecha de nacimiento *</label>
+      <input id="fechaNacimiento" type="date" [(ngModel)]="datosUsuario.fechaNacimiento" required />
 
       <label>
         <input type="checkbox" [(ngModel)]="deseaRegistrarse" />
         Deseo registrarme como cliente para futuras compras
       </label>
+
+      <div *ngIf="deseaRegistrarse">
+        <label for="clave">Contraseña *</label>
+        <input id="clave" type="password" [(ngModel)]="datosUsuario.clave" [required]="deseaRegistrarse" minlength="6" />
+      </div>
     </div>
 
     <!-- RESUMEN -->
@@ -79,6 +94,17 @@
       <p>Productos: <strong>{{ totalProductos | currency:'CLP' }}</strong></p>
       <p *ngIf="tipoEntrega === 'delivery'">Despacho: <strong>{{ 3500 | currency:'CLP' }}</strong></p>
       <p><strong>Total a pagar: {{ totalFinal | currency:'CLP' }}</strong></p>
+
+      <h4>Método de pago</h4>
+      <label>
+        <input type="radio" name="metodoPago" value="transbank" [(ngModel)]="metodoPago" />
+        Webpay
+      </label>
+      <br />
+      <label>
+        <input type="radio" name="metodoPago" value="transferencia" [(ngModel)]="metodoPago" />
+        Transferencia
+      </label>
 
       <button class="btn-pagar" (click)="pagarCompra()">Pagar compra</button>
     </div>

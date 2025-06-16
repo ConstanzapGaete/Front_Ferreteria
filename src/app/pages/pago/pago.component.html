@@ -1,1 +1,33 @@
-<p>pago works!</p>
+<section class="pago-container">
+  <h2>Proceso de Pago</h2>
+
+  <div *ngIf="metodoPago === 'transbank'">
+    <p>Estás pagando a través de Webpay. Serás redirigida a la plataforma de Transbank.</p>
+    
+    <button 
+    class="btn-webpay"
+    *ngIf="urlTransbank"
+    (click)="abrirWebpay()"
+    >
+    Ir a Webpay
+    </button>
+
+    <p *ngIf="!urlTransbank">Generando enlace de pago...</p>
+  </div>
+
+  <div *ngIf="metodoPago === 'transferencia'">
+    <p>Has elegido pago por transferencia. Por favor, sube el comprobante.</p>
+
+    <input type="file" (change)="subirComprobante($event)" accept=".pdf,.jpg,.jpeg,.png" />
+    
+    <button class="btn-subir" (click)="confirmarTransferencia()" [disabled]="subiendo">
+      {{ subiendo ? 'Subiendo...' : 'Confirmar transferencia' }}
+    </button>
+
+    <p *ngIf="mensajeEstado">{{ mensajeEstado }}</p>
+  </div>
+
+  <div *ngIf="!metodoPago">
+    <p>Error: no se especificó el método de pago.</p>
+  </div>
+</section>
