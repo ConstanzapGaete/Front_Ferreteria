@@ -1,90 +1,75 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartService } from '../../services/cart.service';
-import { ActivatedRoute } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { CatalogoService } from '../../services/catalogo.service';
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './catalogo.component.html',
-  styleUrl: './catalogo.component.css'
+  styleUrls: ['./catalogo.component.css']
 })
+export class CatalogoComponent implements OnInit {
+  productos: any[] = [];
+  productosFiltrados: any[] = [];
+  placeholders: any[] = []; // ← NUEVO: para tarjetas invisibles
 
-export class CatalogoComponent {
+  currentPage: number = 1;
+  itemsPerPage: number = 6;
 
+  private catalogoService = inject(CatalogoService);
 
-  productos = [
-    {
-      id: 1,
-      nombre: 'Taladro Percutor Bosch',
-      descripcion: 'Potente herramienta eléctrica para perforar.',
-      precio: 89990,
-      imagen: 'assets/images/taladro.jpg',
-      marca: 'Bosch',
-      categoria: 'Herramientas Eléctricas'
-    },
-    {
-      id: 2,
-      nombre: 'Martillo Stanley',
-      descripcion: 'Martillo de carpintero 16 oz.',
-      precio: 7990,
-      imagen: 'assets/images/martillo.png',
-      marca: 'Stanley',
-      categoria: 'Herramientas Manuales'
-    },
-    {
-      id: 3,
-      nombre: 'Cemento Melon Especial',
-      descripcion: 'Especial 25K.',
-      precio: 4990,
-      imagen: 'assets/images/cemento.jpg',
-      marca: 'Melon',
-      categoria: 'Materiales'
-    }
-  ];
-
-   productosFiltrados = this.productos;
-  terminoBuscado: string = '';
-
-  constructor(private cartService: CartService, private route: ActivatedRoute) {}
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      const q = (params['q'] || '').toLowerCase();
-      this.terminoBuscado = q;
-      this.filtrarProductos(q);
+  ngOnInit(): void {
+    this.catalogoService.getProductosPaginados(1, 1000).subscribe((res) => {
+      const data = Array.isArray(res) ? res : res?.data?.data;
+      if (Array.isArray(data)) {
+        this.productos = data.map(p => ({
+          ...p,
+          nombre: this.decodeLatin1(p.nombre),
+          descripcion: this.decodeLatin1(p.descripcion),
+          imagenUrl: this.fixImagePath(p.imagenUrl)
+        }));
+        this.actualizarPaginacion();
+      } else {
+        console.error('Error al cargar productos', res);
+      }
     });
   }
 
-  filtrarProductos(termino: string) {
-    if (!termino) {
-      this.productosFiltrados = this.productos;
-    } else {
-      this.productosFiltrados = this.productos.filter(prod =>
-        prod.nombre.toLowerCase().includes(termino) ||
-        prod.marca.toLowerCase().includes(termino)
-      );
+  actualizarPaginacion(): void {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.productosFiltrados = this.productos.slice(start, end);
+
+    // ← NUEVO: Calcula cuántos placeholders son necesarios
+    const faltantes = this.itemsPerPage - this.productosFiltrados.length;
+    this.placeholders = Array(faltantes > 0 ? faltantes : 0).fill(0);
+  }
+
+  cambiarPagina(pagina: number): void {
+    this.currentPage = pagina;
+    this.actualizarPaginacion();
+  }
+
+  get totalPaginas(): number[] {
+    const total = Math.ceil(this.productos.length / this.itemsPerPage);
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  private decodeLatin1(str: string): string {
+    try {
+      return decodeURIComponent(escape(str));
+    } catch {
+      return str;
     }
   }
 
-  addToCart(product: any) {
-    this.cartService.addToCart(product);
-    alert(`${product.nombre} agregado al carrito 🛒`);
+  private fixImagePath(path: string): string {
+    if (!path) return '';
+    if (path.startsWith('assets/') || path.startsWith('/assets/')) {
+      return path.replace(/^\/?/, '');
+    }
+    return 'assets/images/' + path;
   }
 }
-
-/* ESTO PARA CUANDO YA ESTE LA API
-export class CatalogoComponent implements OnInit {
-  productos: any[] = []; // opcionalmente: productos: Producto[] = [];
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit() {
-    this.http.get<any[]>('http://tubackend.com/api/productos')
-      .subscribe(data => {
-        this.productos = data;
-      });
-  }
-}
-*/
