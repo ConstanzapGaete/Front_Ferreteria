@@ -1,8 +1,21 @@
 <section class="pago-container">
   <h2>Proceso de Pago</h2>
 
+  <!-- Confirmación Webpay -->
+  <div *ngIf="estadoWebpay" class="card confirmacion-webpay">
+    <h3>Resultado de tu pago</h3>
+    <div class="detalle-pago">
+      <p><strong>Estado:</strong> <span [ngClass]="{'aprobado': estadoWebpay === 'AUTHORIZED', 'rechazado': estadoWebpay !== 'AUTHORIZED'}">{{ estadoWebpay }}</span></p>
+      <p><strong>Orden de compra:</strong> {{ ordenCompra }}</p>
+      <p><strong>Monto pagado:</strong> ${{ monto }}</p>
+    </div>
+    <p *ngIf="mensajeEstado" class="estado-mensaje">
+      {{ mensajeEstado }}
+    </p>
+  </div>
+
   <!-- Pago con Webpay -->
-  <div *ngIf="metodoPago === 'transbank'">
+  <div *ngIf="metodoPago === 'transbank' && !estadoWebpay">
     <p>Estás pagando a través de Webpay. Serás redirigida a la plataforma de Transbank.</p>
 
     <button 
@@ -40,7 +53,7 @@
   </div>
 
   <!-- Sin método de pago -->
-  <div *ngIf="!metodoPago">
+  <div *ngIf="!metodoPago && !estadoWebpay">
     <p class="error-text">Error: no se especificó el método de pago.</p>
   </div>
 </section>

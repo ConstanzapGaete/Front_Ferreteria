@@ -16,9 +16,15 @@ export class PagoComponent implements OnInit {
   metodoPago: string = '';
   urlTransbank: string = '';
   comprobante!: File;
-  clienteId: number = 1; // Reemplazar dinámicamente si corresponde
+  clienteId: number = 1;
   mensajeEstado: string = '';
   subiendo = false;
+
+  // Nuevos campos para mostrar confirmación Webpay
+  tokenWS: string = '';
+  estadoWebpay: string = '';
+  ordenCompra: string = '';
+  monto: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +35,7 @@ export class PagoComponent implements OnInit {
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const metodoParam = this.route.snapshot.queryParamMap.get('metodo');
+    const tokenParam = this.route.snapshot.queryParamMap.get('token_ws');
 
     if (idParam) {
       this.pedidoId = +idParam;
@@ -38,7 +45,12 @@ export class PagoComponent implements OnInit {
       this.metodoPago = metodoParam;
 
       if (this.metodoPago === 'transbank') {
-        this.crearTransaccionWebpay();
+        if (tokenParam) {
+          this.tokenWS = tokenParam;
+          this.confirmarPagoWebpay(this.tokenWS);
+        } else {
+          this.crearTransaccionWebpay();
+        }
       }
     } else {
       console.error('No se especificó el método de pago en la URL');
@@ -47,7 +59,7 @@ export class PagoComponent implements OnInit {
 
   crearTransaccionWebpay() {
     const body = {
-      monto: 10000, // Idealmente lo traes desde backend
+      monto: 10000,
       ordenCompra: `ORD${this.pedidoId}`,
       sesionId: `SES${this.pedidoId}`
     };
@@ -58,6 +70,22 @@ export class PagoComponent implements OnInit {
       },
       (err) => {
         console.error('Error al crear transacción Webpay', err);
+      }
+    );
+  }
+
+  confirmarPagoWebpay(token: string) {
+    this.http.get<any>(`http://localhost:3000/webpay/estado?token_ws=${token}`).subscribe(
+      (res) => {
+        const datos = res.datos;
+        this.ordenCompra = datos.buy_order;
+        this.monto = datos.amount;
+        this.estadoWebpay = datos.status;
+        this.mensajeEstado = `Pago ${this.estadoWebpay}: orden ${this.ordenCompra}, monto $${this.monto}`;
+      },
+      (err) => {
+        console.error('Error al confirmar pago Webpay', err);
+        this.mensajeEstado = 'Error al confirmar la transacción Webpay.';
       }
     );
   }
@@ -74,7 +102,7 @@ export class PagoComponent implements OnInit {
         const intervalo = setInterval(() => {
           if (nuevaVentana.closed) {
             clearInterval(intervalo);
-            this.router.navigate(['/']); // Cambiar si deseas otra ruta
+            window.location.reload(); // Refresca la página para detectar token_ws
           }
         }, 1000);
       }
