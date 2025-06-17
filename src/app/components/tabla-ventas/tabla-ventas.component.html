@@ -1,9 +1,141 @@
-<section class="tabla-ventas">
-  <h2>Listado de Ventas</h2>
+<div class="container">
+  <h2>Listado de Pedidos</h2>
 
-  <section class="tabla-ventas">
-    <div *ngIf="pdfUrl" style="margin-top: 1rem;">
-      <iframe [src]="pdfUrl" width="100%" height="600px" style="border: 1px solid #ccc;"></iframe>
+  <div *ngIf="cargando" class="loading">
+    <p>Cargando pedidos...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <table *ngIf="!cargando && pedidos.length > 0" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Fecha</th>
+        <th>Dirección</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Tipo Entrega</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pedido of pedidos">
+        <td>{{ pedido.codigo }}</td>
+        <td>{{ formatearFecha(pedido.fechaPedido) }}</td>
+        <td>{{ pedido.direccionEntrega }}</td>
+        <td>{{ formatearMoneda(pedido.total) }}</td>
+        <td>
+          <span
+            class="badge"
+            [ngClass]="{
+              'badge-success': pedido.estado === 'Entregado',
+              'badge-warning': pedido.estado === 'En proceso',
+              'badge-danger': pedido.estado === 'Cancelado'
+            }"
+          >
+            {{ pedido.estado }}
+          </span>
+        </td>
+        <td>{{ pedido.tipoentrega }}</td>
+        <td>
+          <button (click)="verDetalle(pedido)" class="btn btn-info btn-sm">
+            Detalle
+          </button>
+          <button
+            (click)="descargarPDF(pedido.id)"
+            class="btn btn-primary btn-sm"
+          >
+            PDF
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!cargando && pedidos.length === 0" class="alert alert-info">
+    No hay pedidos registrados.
+  </div>
+
+  <div
+    *ngIf="pedidoSeleccionado"
+    class="modal-backdrop"
+    (click)="cerrarDetalle()"
+  ></div>
+
+  <div *ngIf="pedidoSeleccionado" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Detalle del Pedido {{ pedidoSeleccionado.codigo }}</h3>
+        <button (click)="cerrarDetalle()" class="close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p>
+              <strong>Fecha:</strong>
+              {{ formatearFecha(pedidoSeleccionado.fechaPedido) }}
+            </p>
+            <p><strong>Código:</strong> {{ pedidoSeleccionado.codigo }}</p>
+            <p><strong>Estado:</strong> {{ pedidoSeleccionado.estado }}</p>
+            <p>
+              <strong>Tipo Entrega:</strong>
+              {{ pedidoSeleccionado.tipoentrega }}
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <strong>Dirección:</strong>
+              {{ pedidoSeleccionado.direccionEntrega }}
+            </p>
+            <p>
+              <strong>Nota:</strong>
+              {{ pedidoSeleccionado.nota || "Sin notas" }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <h4>Totales</h4>
+            <table class="table table-sm">
+              <tr>
+                <td><strong>Subtotal:</strong></td>
+                <td>{{ formatearMoneda(pedidoSeleccionado.subtotal) }}</td>
+              </tr>
+              <tr>
+                <td><strong>Descuento:</strong></td>
+                <td>- {{ formatearMoneda(pedidoSeleccionado.descuento) }}</td>
+              </tr>
+              <tr>
+                <td><strong>IVA:</strong></td>
+                <td>{{ formatearMoneda(pedidoSeleccionado.iva) }}</td>
+              </tr>
+              <tr class="table-active">
+                <td><strong>Total:</strong></td>
+                <td>
+                  <strong>{{
+                    formatearMoneda(pedidoSeleccionado.total)
+                  }}</strong>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          (click)="descargarPDF(pedidoSeleccionado.id)"
+          class="btn btn-primary"
+        >
+          <i class="fas fa-file-pdf"></i> Descargar PDF
+        </button>
+        <button (click)="cerrarDetalle()" class="btn btn-secondary">
+          Cerrar
+        </button>
+      </div>
     </div>
-  </section>
-</section>
+  </div>
+</div>

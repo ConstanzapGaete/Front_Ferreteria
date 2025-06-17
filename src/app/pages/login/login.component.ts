@@ -11,7 +11,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
   email: string = '';
@@ -41,6 +41,7 @@ export class LoginComponent {
       next: (res: any) => {
         const token = res.data.token;
         if (token) {
+          console.log(token);
           const decoded = this.jwtHelper.decodeToken(token);
           const rol = decoded.rol;
           this.authService.notifyLogin(token);
@@ -77,7 +78,7 @@ export class LoginComponent {
         const detalle = err.error?.detalle || 'Error inesperado';
         this.errorMsg = detalle;
         console.error('Error de login:', detalle);
-      }
+      },
     });
   }
 }

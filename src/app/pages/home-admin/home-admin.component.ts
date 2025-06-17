@@ -7,11 +7,21 @@ import { GraficoPedidosComponent } from '../../components/grafico-pedidos/grafic
 @Component({
   selector: 'app-home-admin',
   standalone: true,
-  imports: [CommonModule, TablaVentasComponent, TablaUsuariosComponent, GraficoPedidosComponent],
+  imports: [
+    CommonModule,
+    TablaVentasComponent,
+    TablaUsuariosComponent,
+    GraficoPedidosComponent,
+  ],
   templateUrl: './home-admin.component.html',
-  styleUrl: './home-admin.component.css'
+  styleUrl: './home-admin.component.css',
 })
 export class HomeAdminComponent {
+  token = localStorage.getItem('token');
 
   seccionActiva = '';
+
+  ngOnInit(): void {
+    console.log('token', this.token);
+  }
 }
