@@ -16,9 +16,15 @@ export class PagoComponent implements OnInit {
   metodoPago: string = '';
   urlTransbank: string = '';
   comprobante!: File;
-  clienteId!: number; // Asegúrate de asignar esto en tu flujo real
+  clienteId: number = 1;
   mensajeEstado: string = '';
   subiendo = false;
+
+  // Nuevos campos para mostrar confirmación Webpay
+  tokenWS: string = '';
+  estadoWebpay: string = '';
+  ordenCompra: string = '';
+  monto: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +35,7 @@ export class PagoComponent implements OnInit {
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const metodoParam = this.route.snapshot.queryParamMap.get('metodo');
+    const tokenParam = this.route.snapshot.queryParamMap.get('token_ws');
 
     if (idParam) {
       this.pedidoId = +idParam;
@@ -38,7 +45,12 @@ export class PagoComponent implements OnInit {
       this.metodoPago = metodoParam;
 
       if (this.metodoPago === 'transbank') {
-        this.crearTransaccionWebpay();
+        if (tokenParam) {
+          this.tokenWS = tokenParam;
+          this.confirmarPagoWebpay(this.tokenWS);
+        } else {
+          this.crearTransaccionWebpay();
+        }
       }
     } else {
       console.error('No se especificó el método de pago en la URL');
@@ -47,7 +59,7 @@ export class PagoComponent implements OnInit {
 
   crearTransaccionWebpay() {
     const body = {
-      monto: 10000, // Reemplaza con el valor real si lo tienes
+      monto: 10000,
       ordenCompra: `ORD${this.pedidoId}`,
       sesionId: `SES${this.pedidoId}`
     };
@@ -62,13 +74,38 @@ export class PagoComponent implements OnInit {
     );
   }
 
+  confirmarPagoWebpay(token: string) {
+    this.http.get<any>(`http://localhost:3000/webpay/estado?token_ws=${token}`).subscribe(
+      (res) => {
+        const datos = res.datos;
+        this.ordenCompra = datos.buy_order;
+        this.monto = datos.amount;
+        this.estadoWebpay = datos.status;
+        this.mensajeEstado = `Pago ${this.estadoWebpay}: orden ${this.ordenCompra}, monto $${this.monto}`;
+      },
+      (err) => {
+        console.error('Error al confirmar pago Webpay', err);
+        this.mensajeEstado = 'Error al confirmar la transacción Webpay.';
+      }
+    );
+  }
+
   subirComprobante(event: any) {
     this.comprobante = event.target.files[0];
   }
 
   abrirWebpay() {
     if (this.urlTransbank) {
-      window.open(this.urlTransbank, '_blank');
+      const nuevaVentana = window.open(this.urlTransbank, '_blank');
+
+      if (nuevaVentana) {
+        const intervalo = setInterval(() => {
+          if (nuevaVentana.closed) {
+            clearInterval(intervalo);
+            window.location.reload(); // Refresca la página para detectar token_ws
+          }
+        }, 1000);
+      }
     }
   }
 
@@ -77,23 +114,21 @@ export class PagoComponent implements OnInit {
 
     this.subiendo = true;
 
-    // Simulación de subida real
-    const urlSimulada = `https://miservidor.com/comprobantes/${this.comprobante.name}`;
+    const formData = new FormData();
+    formData.append('archivo', this.comprobante);
+    formData.append('clienteId', this.clienteId.toString());
+    formData.append('pedidoId', this.pedidoId.toString());
+    formData.append('tipo', 'TRANSFERENCIA');
 
-    const body = {
-      clienteId: this.clienteId, // Reemplaza con el valor real desde sesión si es necesario
-      url: urlSimulada,
-      tipo: 'pago'
-    };
-
-    this.http.post<any>('http://localhost:3000/java-api/pedido/comprobante/guardar', body).subscribe(
+    this.http.post<any>('http://localhost:3000/archivo', formData).subscribe(
       (res) => {
-        this.mensajeEstado = 'Comprobante enviado correctamente. Tu pedido será revisado.';
+        this.mensajeEstado = 'Tu comprobante ha sido enviado. Espera la validación del contador.';
         this.subiendo = false;
       },
       (err) => {
-        console.error('Error al enviar comprobante', err);
-        this.mensajeEstado = 'Hubo un problema al subir el comprobante.';
+        console.error('Error al subir comprobante', err);
+        const errorMsg = err?.error?.mensajeJava || 'Hubo un problema al subir el comprobante.';
+        this.mensajeEstado = errorMsg;
         this.subiendo = false;
       }
     );
