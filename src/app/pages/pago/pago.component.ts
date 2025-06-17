@@ -16,7 +16,7 @@ export class PagoComponent implements OnInit {
   metodoPago: string = '';
   urlTransbank: string = '';
   comprobante!: File;
-  clienteId!: number; // Asegúrate de asignar esto en tu flujo real
+  clienteId: number = 1; // Reemplazar dinámicamente si corresponde
   mensajeEstado: string = '';
   subiendo = false;
 
@@ -47,7 +47,7 @@ export class PagoComponent implements OnInit {
 
   crearTransaccionWebpay() {
     const body = {
-      monto: 10000, // Reemplaza con el valor real si lo tienes
+      monto: 10000, // Idealmente lo traes desde backend
       ordenCompra: `ORD${this.pedidoId}`,
       sesionId: `SES${this.pedidoId}`
     };
@@ -68,7 +68,16 @@ export class PagoComponent implements OnInit {
 
   abrirWebpay() {
     if (this.urlTransbank) {
-      window.open(this.urlTransbank, '_blank');
+      const nuevaVentana = window.open(this.urlTransbank, '_blank');
+
+      if (nuevaVentana) {
+        const intervalo = setInterval(() => {
+          if (nuevaVentana.closed) {
+            clearInterval(intervalo);
+            this.router.navigate(['/']); // Cambiar si deseas otra ruta
+          }
+        }, 1000);
+      }
     }
   }
 
@@ -77,23 +86,21 @@ export class PagoComponent implements OnInit {
 
     this.subiendo = true;
 
-    // Simulación de subida real
-    const urlSimulada = `https://miservidor.com/comprobantes/${this.comprobante.name}`;
+    const formData = new FormData();
+    formData.append('archivo', this.comprobante);
+    formData.append('clienteId', this.clienteId.toString());
+    formData.append('pedidoId', this.pedidoId.toString());
+    formData.append('tipo', 'TRANSFERENCIA');
 
-    const body = {
-      clienteId: this.clienteId, // Reemplaza con el valor real desde sesión si es necesario
-      url: urlSimulada,
-      tipo: 'pago'
-    };
-
-    this.http.post<any>('http://localhost:3000/java-api/pedido/comprobante/guardar', body).subscribe(
+    this.http.post<any>('http://localhost:3000/archivo', formData).subscribe(
       (res) => {
-        this.mensajeEstado = 'Comprobante enviado correctamente. Tu pedido será revisado.';
+        this.mensajeEstado = 'Tu comprobante ha sido enviado. Espera la validación del contador.';
         this.subiendo = false;
       },
       (err) => {
-        console.error('Error al enviar comprobante', err);
-        this.mensajeEstado = 'Hubo un problema al subir el comprobante.';
+        console.error('Error al subir comprobante', err);
+        const errorMsg = err?.error?.mensajeJava || 'Hubo un problema al subir el comprobante.';
+        this.mensajeEstado = errorMsg;
         this.subiendo = false;
       }
     );
