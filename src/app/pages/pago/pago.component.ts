@@ -36,9 +36,14 @@ export class PagoComponent implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     const metodoParam = this.route.snapshot.queryParamMap.get('metodo');
     const tokenParam = this.route.snapshot.queryParamMap.get('token_ws');
+    const montoParam = this.route.snapshot.queryParamMap.get('monto');
 
     if (idParam) {
       this.pedidoId = +idParam;
+    }
+
+    if (montoParam) {
+      this.monto = +montoParam;
     }
 
     if (metodoParam) {
@@ -59,7 +64,7 @@ export class PagoComponent implements OnInit {
 
   crearTransaccionWebpay() {
     const body = {
-      monto: 10000,
+      monto: this.monto,
       ordenCompra: `ORD${this.pedidoId}`,
       sesionId: `SES${this.pedidoId}`
     };

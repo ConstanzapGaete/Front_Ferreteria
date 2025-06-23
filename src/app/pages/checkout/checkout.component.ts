@@ -230,9 +230,9 @@ export class CheckoutComponent implements OnInit {
 
     const subtotal = this.totalProductos;
     const descuento = 0;
-    const iva = Math.round((subtotal - descuento) * 0.19);
+    const iva = 0;
     const total =
-      this.tipoEntrega === 'delivery' ? subtotal + iva + 3500 : subtotal + iva;
+      this.tipoEntrega === 'delivery' ? subtotal + 3500 : subtotal;
 
     const direccionEntrega =
       this.tipoEntrega === 'delivery'
@@ -279,7 +279,7 @@ export class CheckoutComponent implements OnInit {
             alert('Pedido realizado con éxito.');
             this.cartService.clearCart();
             this.router.navigate(['/pago', response?.data?.id], {
-              queryParams: { metodo: this.metodoPago },
+              queryParams: { metodo: this.metodoPago, monto: total },
             });
           }
         },
